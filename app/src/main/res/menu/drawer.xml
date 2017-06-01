@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_item_export"
+            android:icon="@drawable/icon_export"
+            android:title="내보내기" />
+        <item
+            android:id="@+id/navigation_item_settings"
+            android:icon="@drawable/icon_settings"
+            android:title="환경설정" />
+        <item
+            android:id="@+id/navigation_item_feedback"
+            android:icon="@drawable/icon_feedback"
+            android:title="문의하기" />
+
+        <item
+            android:id="@+id/navigation_item_review"
+            android:icon="@drawable/icon_review"
+            android:title="리뷰작성" />
+    </group>
+</menu>
