@@ -3,7 +3,6 @@ package com.kimjunhong.jobplanner.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.kimjunhong.jobplanner.R;
@@ -36,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.tabLayout) TabLayout tabLayout;
     @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
     @BindView(R.id.navigationView) NavigationView navigationView;
-    @BindView(R.id.fab) FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
         initToolbar();
         initViewPager();
-        initView();
         initDrawerLayout();
     }
 
@@ -118,15 +114,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
-            }
-        });
-    }
-
-    private void initView() {
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "PLUS", Toast.LENGTH_SHORT).show();
             }
         });
     }
