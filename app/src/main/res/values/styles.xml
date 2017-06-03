@@ -6,29 +6,36 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:textSize">15dp</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
     <!-- Font -->
     <style name="LargeFont">
         <item name="android:textSize">20dp</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="MediumFont">
         <item name="android:textSize">15dp</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="SmallFont">
         <item name="android:textSize">10dp</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <!-- Custom Style -->
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="color">#FFFFFF</item>
+        <item name="color">@color/white</item>
+    </style>
+
+    <style name="RecruitIconStyle">
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_margin">10dp</item>
     </style>
 </resources>

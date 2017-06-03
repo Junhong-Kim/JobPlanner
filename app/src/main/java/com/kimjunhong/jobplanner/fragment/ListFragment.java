@@ -1,5 +1,6 @@
 package com.kimjunhong.jobplanner.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +12,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.kimjunhong.jobplanner.R;
+import com.kimjunhong.jobplanner.activity.RecruitActivity;
 import com.kimjunhong.jobplanner.adapter.ExpandableAdapter;
 
 import java.util.ArrayList;
@@ -96,7 +98,7 @@ public class ListFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "PLUS", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), RecruitActivity.class));
             }
         });
     }
