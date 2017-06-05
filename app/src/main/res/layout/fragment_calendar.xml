@@ -1,11 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Calendar Fragment" />
+        android:layout_margin="10dp"
+        android:background="@drawable/bg_gray"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/calendarView_previous_month"
+                style="@style/RecruitIconStyle"
+                android:src="@drawable/icon_previous" />
+
+            <TextView
+                android:id="@+id/calendarView_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:text="yyyy년 MM월" />
+
+            <ImageView
+                android:id="@+id/calendarView_next_month"
+                style="@style/RecruitIconStyle"
+                android:src="@drawable/icon_next" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <com.github.sundeepk.compactcalendarview.CompactCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:layout_margin="5dp"
+            app:compactCalendarCurrentDayBackgroundColor="@color/sub"
+            app:compactCalendarCurrentDayTextColor="@color/black"
+            app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorAccent"
+            app:compactCalendarCurrentSelectedDayTextColor="@color/white"
+            app:compactCalendarMultiEventIndicatorColor="@color/colorPrimary"
+            app:compactCalendarOtherMonthDaysTextColor="@color/sub"
+            app:compactCalendarShouldSelectFirstDayOfMonthOnScroll="false"
+            app:compactCalendarTargetHeight="250dp"
+            app:compactCalendarTextSize="10dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/sub" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recruit_event_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
