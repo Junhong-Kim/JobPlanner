@@ -32,4 +32,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
     compile 'com.github.sundeepk:compact-calendar-view:2.0.2.1'
+
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
 }

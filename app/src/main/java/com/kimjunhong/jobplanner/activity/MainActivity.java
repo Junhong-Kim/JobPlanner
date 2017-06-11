@@ -1,5 +1,6 @@
 package com.kimjunhong.jobplanner.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_chart:
-                Toast.makeText(this, "CHART", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, ChartActivity.class));
                 return true;
         }
 
