@@ -14,18 +14,18 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/imageView_previous_process"
+            android:id="@+id/chart_previous_process"
             style="@style/RecruitIconStyle"
             android:src="@drawable/icon_previous" />
 
         <TextView
-            android:id="@+id/textView_process_name"
+            android:id="@+id/chart_process_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="유형" />
+            android:text="전형" />
 
         <ImageView
-            android:id="@+id/imageView_next_process"
+            android:id="@+id/chart_next_process"
             style="@style/RecruitIconStyle"
             android:src="@drawable/icon_next" />
     </LinearLayout>
@@ -42,10 +42,9 @@
         android:layout_marginTop="20dp"
         android:background="@color/sub" />
 
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/chart_detail_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="전형 결과" />
+        android:layout_weight="1" />
 </LinearLayout>

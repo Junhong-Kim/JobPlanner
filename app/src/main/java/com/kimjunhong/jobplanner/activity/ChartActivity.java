@@ -5,6 +5,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -27,8 +29,11 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.kimjunhong.jobplanner.R;
+import com.kimjunhong.jobplanner.adapter.ChartDetailAdapter;
+import com.kimjunhong.jobplanner.item.ChartDetailItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,10 +44,11 @@ import butterknife.ButterKnife;
 
 public class ChartActivity extends AppCompatActivity implements OnChartValueSelectedListener {
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.imageView_next_process) ImageView nextProcess;
-    @BindView(R.id.imageView_previous_process) ImageView prevProcess;
-    @BindView(R.id.textView_process_name) TextView processName;
+    @BindView(R.id.chart_next_process) ImageView nextProcess;
+    @BindView(R.id.chart_previous_process) ImageView prevProcess;
+    @BindView(R.id.chart_process_name) TextView processName;
     @BindView(R.id.pieChart) PieChart pieChart;
+    @BindView(R.id.chart_detail_recyclerView) RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         initToolbar();
         initChart();
         initView();
+        initRecyclerView();
     }
 
     @Override
@@ -154,5 +161,25 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
                 Toast.makeText(getApplicationContext(), "NEXT", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private List<ChartDetailItem> dummyData() {
+        List<ChartDetailItem> items = new ArrayList<>();
+        ChartDetailItem[] item = new ChartDetailItem[2];
+
+        item[0] = new ChartDetailItem(R.drawable.icon_company_logo, "Company", "Android Developer", "합격", "17.06.19");
+        item[1] = new ChartDetailItem(R.drawable.icon_company_logo, "Company", "Android Developer", "합격", "17.06.19");
+
+        for(int i = 0; i < item.length; i++) {
+            items.add(item[i]);
+        }
+
+        return items;
+    }
+
+    private void initRecyclerView() {
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(new ChartDetailAdapter(getApplicationContext(), dummyData()));
     }
 }
