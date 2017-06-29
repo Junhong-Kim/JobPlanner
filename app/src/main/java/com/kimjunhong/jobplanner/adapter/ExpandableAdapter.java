@@ -2,6 +2,7 @@ package com.kimjunhong.jobplanner.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.kimjunhong.jobplanner.R;
+import com.kimjunhong.jobplanner.model.Recruit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by INMA on 2017. 6. 2..
@@ -20,121 +26,136 @@ import java.util.ArrayList;
 
 public class ExpandableAdapter extends BaseExpandableListAdapter {
     private Context context;
-    private ArrayList<String> groupList = null;
-    private ArrayList<ArrayList<String>> childList = null;
-    private LayoutInflater inflater = null;
-    private ViewHolder viewHolder = null;
+    private ArrayList<String> parentList;
+    private HashMap<String, ArrayList<Recruit>> childHashMap;
+    private ParentViewHolder parentVH;
+    private ChildViewHolder childVH;
 
-    public ExpandableAdapter(Context context, ArrayList<String> groupList, ArrayList<ArrayList<String>> childList){
+    public ExpandableAdapter(Context context, ArrayList<String> parentList, HashMap<String, ArrayList<Recruit>> childHashMap){
         super();
         this.context = context;
-        this.inflater = LayoutInflater.from(context);
-        this.groupList = groupList;
-        this.childList = childList;
+        this.parentList = parentList;
+        this.childHashMap = childHashMap;
     }
 
-    /* PARENT */
-
-    // Parent position return
+    // Parent - position return
     @Override
     public String getGroup(int groupPosition) {
-        return groupList.get(groupPosition);
+        return parentList.get(groupPosition);
     }
 
-    // Parent size return
+    // Parent - size return
     @Override
     public int getGroupCount() {
-        return groupList.size();
+        return parentList.size();
     }
 
-    // Parent ID return
+    // Parent - ID return
     @Override
     public long getGroupId(int groupPosition) {
         return groupPosition;
     }
 
-    // Parent ROW return
+    // Parent - ROW return
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        View view = convertView;
 
-        View v = convertView;
+        if(view == null) {
+            LayoutInflater groupInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = groupInflater.inflate(R.layout.item_recruit_parent, parent, false);
 
-        if(v == null ) {
-            viewHolder = new ViewHolder();
-            v = inflater.inflate(R.layout.item_recruit_parent, parent, false);
+            parentVH = new ParentViewHolder();
+            parentVH.layout = (LinearLayout) view.findViewById(R.id.recruit_parent_layout);
+            parentVH.process = (TextView) view.findViewById(R.id.recruit_parent_process);
+            parentVH.count = (TextView) view.findViewById(R.id.recruit_parent_count);
+            parentVH.indicator = (ImageView) view.findViewById(R.id.recruit_parent_indicator);
 
-            viewHolder.layout = (LinearLayout) v.findViewById(R.id.recruit_parent_layout);
-            viewHolder.process = (TextView) v.findViewById(R.id.recruit_process);
-            viewHolder.indicator = (ImageView) v.findViewById(R.id.recruit_indicator);
-
-            v.setTag(viewHolder);
+            view.setTag(parentVH);
 
         } else {
-            viewHolder = (ViewHolder)v.getTag();
+            parentVH = (ParentViewHolder)view.getTag();
         }
 
-        // 짝수번째 Parent layout 색상 지정
+        // Set - Even parent layout color
         if(groupPosition % 2 != 0) {
-            viewHolder.layout.setBackgroundColor(ContextCompat.getColor(context, R.color.sub));
+            parentVH.layout.setBackgroundColor(ContextCompat.getColor(context, R.color.sub));
         }
 
-        // Indicator 이미지 지정
+        // Set - Indicator image
         if(isExpanded) {
-            viewHolder.indicator.setImageResource(R.drawable.icon_collapse_arrow);
+            parentVH.indicator.setImageResource(R.drawable.icon_collapse_arrow);
         } else {
-            viewHolder.indicator.setImageResource(R.drawable.icon_expand_arrow);
+            parentVH.indicator.setImageResource(R.drawable.icon_expand_arrow);
         }
 
-        viewHolder.process.setText(getGroup(groupPosition));
+        // Set - Process & Count
+        parentVH.process.setText(getGroup(groupPosition));
+        parentVH.count.setText("(" + getChildrenCount(groupPosition) + ")");
 
-        return v;
+        return view;
     }
 
-    /* CHILD */
-
-    // Child position return
+    // Child - position return
     @Override
-    public String getChild(int groupPosition, int childPosition) {
-        return childList.get(groupPosition).get(childPosition);
+    public Recruit getChild(int groupPosition, int childPosition) {
+        return childHashMap.get(parentList.get(groupPosition)).get(childPosition);
     }
 
-    // Child size return
+    // Child - size return
     @Override
     public int getChildrenCount(int groupPosition) {
-        return childList.get(groupPosition).size();
+        return childHashMap.get(parentList.get(groupPosition)).size();
     }
 
-    // Child ID return
+    // Child - ID return
     @Override
     public long getChildId(int groupPosition, int childPosition) {
         return childPosition;
     }
 
-    // Child ROW return
+    // Child - ROW return
     @Override
-    public View getChildView(int groupPosition, int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        View view = convertView;
 
-        View v = convertView;
+        if(view == null) {
+            LayoutInflater childInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = childInflater.inflate(R.layout.item_recruit_child, null);
 
-        if(v == null) {
-            viewHolder = new ViewHolder();
-            v = inflater.inflate(R.layout.item_recruit_child, null);
+            childVH = new ChildViewHolder();
+            childVH.logo = (ImageView) view.findViewById(R.id.recruit_child_logo);
+            childVH.company = (TextView) view.findViewById(R.id.recruit_child_company);
+            childVH.pattern = (TextView) view.findViewById(R.id.recruit_child_pattern);
+            childVH.position = (TextView) view.findViewById(R.id.recruit_child_position);
+            childVH.schedule = (TextView) view.findViewById(R.id.recruit_child_schedule);
+            childVH.result = (TextView) view.findViewById(R.id.recruit_child_result);
 
-            viewHolder.name = (TextView) v.findViewById(R.id.company_name);
-            viewHolder.logo = (ImageView) v.findViewById(R.id.company_logo);
-
-            v.setTag(viewHolder);
+            view.setTag(childVH);
 
         } else {
-            viewHolder = (ViewHolder)v.getTag();
+            childVH = (ChildViewHolder) view.getTag();
         }
 
+        // Set - Child View
+        Log.v("log", "로고: " + getChild(groupPosition, childPosition).getLogo());
 
-        viewHolder.name.setText(getChild(groupPosition, childPosition));
-        viewHolder.logo.setImageResource(R.drawable.icon_company_logo);
+        if(getChild(groupPosition, childPosition).getLogo() == null) {
+            childVH.logo.setImageResource(R.drawable.icon_company_logo);
+        } else {
+            Glide.with(context)
+                    .load(getChild(groupPosition, childPosition).getLogo()).asBitmap()
+                    .transform(new CropCircleTransformation(context))
+                    .placeholder(R.drawable.icon_picture)
+                    .into(childVH.logo);
+        }
+        childVH.company.setText(getChild(groupPosition, childPosition).getCompany());
+        childVH.pattern.setText(getChild(groupPosition, childPosition).getPattern());
+        childVH.position.setText(getChild(groupPosition, childPosition).getPosition());
+        childVH.schedule.setText(getChild(groupPosition, childPosition).getSchedule());
+        childVH.result.setText(getChild(groupPosition, childPosition).getProcessResult());
 
-        return v;
+        return view;
     }
 
     @Override
@@ -145,12 +166,19 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) { return true; }
 
-    class ViewHolder {
+    class ParentViewHolder {
         public LinearLayout layout;
         public TextView process;
+        public TextView count;
         public ImageView indicator;
-        public ImageView logo;
-        public TextView name;
     }
 
+    class ChildViewHolder {
+        public ImageView logo;
+        public TextView company;
+        public TextView pattern;
+        public TextView position;
+        public TextView schedule;
+        public TextView result;
+    }
 }

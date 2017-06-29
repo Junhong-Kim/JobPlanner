@@ -1,5 +1,6 @@
 package com.kimjunhong.jobplanner.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.adapter.TabPagerAdapter;
 import com.kimjunhong.jobplanner.fragment.CalendarFragment;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         initToolbar();
         initViewPager();
         initDrawerLayout();
+        permissionCheck();
     }
 
     @Override
@@ -152,5 +156,26 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void permissionCheck() {
+        PermissionListener permissionListener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                Toast.makeText(MainActivity.this, "거부된 권한\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        new TedPermission(this)
+                .setPermissionListener(permissionListener)
+                .setRationaleMessage("원활한 서비스 이용을 위해\n앱의 권한이 필요합니다!\n\n- 개발자 올림 -")
+                .setDeniedMessage("앗.. 권한을 거부하셨어요!\n[설정] ► [권한]에서 권한을 허용하시면\n원활한 서비스 이용이 가능합니다.")
+                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .check();
     }
 }

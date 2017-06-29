@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,15 @@ import android.widget.Toast;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.activity.RecruitActivity;
 import com.kimjunhong.jobplanner.adapter.ExpandableAdapter;
+import com.kimjunhong.jobplanner.model.Recruit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by INMA on 2017. 5. 31..
@@ -28,9 +33,14 @@ public class ListFragment extends Fragment {
     @BindView(R.id.expandableListView) ExpandableListView mListView;
     @BindView(R.id.fab) FloatingActionButton fab;
 
-    private ArrayList<String> mGroupList = null;
-    private ArrayList<ArrayList<String>> mChildList = null;
-    private ArrayList<String> mChildListContent = null;
+    private ArrayList<String> parentList;
+    private ArrayList<Recruit> documentProcess;
+    private ArrayList<Recruit> testProcess;
+    private ArrayList<Recruit> interviewProcess;
+    private ArrayList<Recruit> processResult;
+    private HashMap<String, ArrayList<Recruit>> childList;
+
+    private Realm realm;
 
     @Nullable
     @Override
@@ -38,25 +48,70 @@ public class ListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, view);
 
-        mGroupList = new ArrayList<String>();
-        mChildList = new ArrayList<ArrayList<String>>();
-        mChildListContent = new ArrayList<String>();
+        // Parent List Contents
+        parentList = new ArrayList<>();
+        parentList.add("서류");
+        parentList.add("필기");
+        parentList.add("면접");
+        parentList.add("결과");
 
-        mGroupList.add("서류");
-        mGroupList.add("필기");
-        mGroupList.add("면접");
-        mGroupList.add("결과");
+        // Child - Document Process Contents
+        documentProcess = new ArrayList<>();
+        realm = Realm.getDefaultInstance();
+        RealmResults<Recruit> documentProcessList = realm.where(Recruit.class).equalTo("processResult", "진행중")
+                                                                              .equalTo("process", "서류")
+                                                                              .findAll();
+        for(Recruit recruit : documentProcessList) {
+            Log.v("log", recruit + ": 서류");
+            documentProcess.add(recruit);
+        }
 
-        mChildListContent.add("A Company");
-        mChildListContent.add("B Company");
-        mChildListContent.add("C Company");
+        // Child - Test Process Contents
+        testProcess = new ArrayList<>();
+        RealmResults<Recruit> testProcessList = realm.where(Recruit.class).equalTo("processResult", "진행중")
+                                                                          .equalTo("process", "인/적성")
+                                                                          .or()
+                                                                          .equalTo("processResult", "진행중")
+                                                                          .equalTo("process", "TEST")
+                                                                          .findAll();
+        for(Recruit recruit : testProcessList) {
+            Log.v("log", recruit + ": 시험");
+            testProcess.add(recruit);
+        }
 
-        mChildList.add(mChildListContent);
-        mChildList.add(mChildListContent);
-        mChildList.add(mChildListContent);
-        mChildList.add(mChildListContent);
+        // Child - Interview Process Contents
+        interviewProcess = new ArrayList<>();
+        RealmResults<Recruit> interviewProcessList = realm.where(Recruit.class).equalTo("processResult", "진행중")
+                                                                               .equalTo("process", "1차면접")
+                                                                               .or()
+                                                                               .equalTo("processResult", "진행중")
+                                                                               .equalTo("process", "2차면접")
+                                                                               .or()
+                                                                               .equalTo("processResult", "진행중")
+                                                                               .equalTo("process", "최종면접")
+                                                                               .findAll();
+        for(Recruit recruit : interviewProcessList) {
+            Log.v("log", recruit + ": 면접");
+            interviewProcess.add(recruit);
+        }
 
-        mListView.setAdapter(new ExpandableAdapter(getActivity(), mGroupList, mChildList));
+        // Child - Process Result Contents
+        processResult = new ArrayList<>();
+        RealmResults<Recruit> processResultList = realm.where(Recruit.class).notEqualTo("processResult", "진행중")
+                                                                            .findAll();
+        for(Recruit recruit : processResultList) {
+            Log.v("log", recruit + ": 결과");
+            processResult.add(recruit);
+        }
+
+        // Mapping - parent with child list
+        childList = new HashMap<>();
+        childList.put(parentList.get(0), documentProcess);
+        childList.put(parentList.get(1), testProcess);
+        childList.put(parentList.get(2), interviewProcess);
+        childList.put(parentList.get(3), processResult);
+
+        mListView.setAdapter(new ExpandableAdapter(getActivity(), parentList, childList));
         mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int groupPosition, long id) {
@@ -99,6 +154,7 @@ public class ListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(), RecruitActivity.class));
+                getActivity().finish();
             }
         });
     }
