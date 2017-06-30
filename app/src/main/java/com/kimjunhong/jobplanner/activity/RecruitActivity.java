@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.model.Recruit;
 
@@ -42,15 +44,23 @@ public class RecruitActivity extends AppCompatActivity {
     @BindView(R.id.recruit_edit_logo) ImageView logo;
     @BindView(R.id.recruit_edit_company) EditText company;
     @BindView(R.id.recruit_edit_pattern) RadioGroup pattern;
+    @BindView(R.id.recruit_edit_pattern_newcomer) RadioButton newcomer;
+    @BindView(R.id.recruit_edit_pattern_intern) RadioButton intern;
+    @BindView(R.id.recruit_edit_pattern_contract) RadioButton contract;
+    @BindView(R.id.recruit_edit_pattern_career) RadioButton career;
     @BindView(R.id.recruit_edit_position) EditText position;
     @BindView(R.id.recruit_edit_schedule) TextView schedule;
     @BindView(R.id.recruit_edit_process) Spinner process;
     @BindView(R.id.recruit_edit_schedule_sub) TextView scheduleSub;
     @BindView(R.id.recruit_edit_process_result) RadioGroup result;
+    @BindView(R.id.recruit_edit_process_ing) RadioButton ing;
+    @BindView(R.id.recruit_edit_process_pass) RadioButton pass;
+    @BindView(R.id.recruit_edit_process_fail) RadioButton fail;
     @BindView(R.id.recruit_edit_link) EditText link;
     @BindView(R.id.recruit_edit_memo) EditText memo;
 
     static int REQUEST_PHOTO_ALBUM = 0;
+    int processPosition;
     private Realm realm;
 
     @Override
@@ -106,8 +116,73 @@ public class RecruitActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.recruit_process, android.R.layout.simple_spinner_item);
+        final int id = getIntent().getIntExtra("id", 0);
+        if(id != 0) {
+            try {
+                realm = Realm.getDefaultInstance();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Recruit recruit = realm.where(Recruit.class).equalTo("id", id).findFirst();
+                        Log.v("log", "Selected: " + recruit);
+
+                        // Logo
+                        Glide.with(getApplicationContext())
+                                .load(recruit.getLogo())
+                                .asBitmap()
+                                .into(logo);
+                        // Company
+                        company.setText(recruit.getCompany());
+                        // Pattern
+                        String checkedPattern = recruit.getPattern();
+                        if(checkedPattern.equals("신입")) {
+                            pattern.check(newcomer.getId());
+                        } else if(checkedPattern.equals("인턴")) {
+                            pattern.check(intern.getId());
+                        } else if(checkedPattern.equals("계약")) {
+                            pattern.check(contract.getId());
+                        } else if(checkedPattern.equals("경력")) {
+                            pattern.check(career.getId());
+                        }
+                        // Position
+                        position.setText(recruit.getPosition());
+                        // Schedule
+                        schedule.setText(recruit.getSchedule());
+                        // Process
+                        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.recruit_process, android.R.layout.simple_spinner_dropdown_item);
+                        process.setAdapter(adapter);
+                        processPosition = adapter.getPosition(recruit.getProcess());
+                        // Schedule sub
+                        scheduleSub.setText(recruit.getScheduleSub());
+                        // Process result
+                        String checkedResult = recruit.getProcessResult();
+                        if(checkedResult.equals("진행중")) {
+                            result.check(ing.getId());
+                        } else if(checkedResult.equals("합격")) {
+                            result.check(pass.getId());
+                        } else if(checkedResult.equals("불합격")) {
+                            result.check(fail.getId());
+                        }
+                        // Link
+                        link.setText(recruit.getLink());
+                        // Memo
+                        memo.setText(recruit.getMemo());
+                    }
+                });
+            } finally {
+                realm.close();
+            }
+        }
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.recruit_process, android.R.layout.simple_spinner_dropdown_item);
         process.setAdapter(adapter);
+        if(processPosition == 0) {
+            // Clicked fab or document process
+            process.setSelection(0);
+        } else {
+            // Etc process
+            process.setSelection(processPosition);
+        }
 
         Calendar calendar = Calendar.getInstance();
         final int year = calendar.get(Calendar.YEAR);

@@ -123,7 +123,25 @@ public class ListFragment extends Fragment {
         mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long id) {
-                Toast.makeText(getActivity(), "Child click = " + childPosition, Toast.LENGTH_SHORT).show();
+                final int childId = childList.get(parentList.get(groupPosition)).get(childPosition).getId();
+
+                try {
+                    realm = Realm.getDefaultInstance();
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            Intent intent = new Intent(getActivity(), RecruitActivity.class);
+                            Recruit recruit = Recruit.findOne(realm, childId);
+                            intent.putExtra("id", recruit.getId());
+
+                            startActivity(intent);
+                            getActivity().finish();
+                        }
+                    });
+                } finally {
+                    realm.close();
+                }
+
                 return false;
             }
         });
@@ -131,7 +149,7 @@ public class ListFragment extends Fragment {
         mListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getActivity(), "Group collapse = " + groupPosition, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "Group collapse = " + groupPosition, Toast.LENGTH_SHORT).show();
                 fab.setVisibility(View.VISIBLE);
             }
         });
@@ -139,7 +157,7 @@ public class ListFragment extends Fragment {
         mListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getActivity(), "Group expand = " + groupPosition, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "Group expand = " + groupPosition, Toast.LENGTH_SHORT).show();
                 fab.setVisibility(View.INVISIBLE);
             }
         });

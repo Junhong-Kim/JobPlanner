@@ -147,4 +147,8 @@ public class Recruit extends RealmObject {
 
         Log.v("log", String.valueOf(recruits));
     }
+
+    public static Recruit findOne(Realm realm, int id) {
+        return realm.where(Recruit.class).equalTo("id", id).findFirst();
+    }
 }
