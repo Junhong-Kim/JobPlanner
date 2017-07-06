@@ -148,6 +148,23 @@ public class Recruit extends RealmObject {
         Log.v("log", String.valueOf(recruits));
     }
 
+    public static void update(Realm realm, Recruit newRecruit) {
+        Recruit recruit = findOne(realm, newRecruit.getId());
+
+        if(recruit.getLogo() != null) {
+            recruit.setLogo(newRecruit.getLogo());
+        }
+        recruit.setCompany(newRecruit.getCompany());
+        recruit.setPattern(newRecruit.getPattern());
+        recruit.setPosition(newRecruit.getPosition());
+        recruit.setSchedule(newRecruit.getSchedule());
+        recruit.setProcess(newRecruit.getProcess());
+        recruit.setScheduleSub(newRecruit.getScheduleSub());
+        recruit.setProcessResult(newRecruit.getProcessResult());
+        recruit.setLink(newRecruit.getLink());
+        recruit.setMemo(newRecruit.getMemo());
+    }
+
     public static Recruit findOne(Realm realm, int id) {
         return realm.where(Recruit.class).equalTo("id", id).findFirst();
     }

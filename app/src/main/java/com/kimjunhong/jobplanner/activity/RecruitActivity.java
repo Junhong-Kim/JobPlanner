@@ -95,7 +95,13 @@ public class RecruitActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_edit:
-                createRecruit();
+                int id = getIntent().getIntExtra("id", 0);
+
+                if(id != 0) {
+                    updateRecruit(id);
+                } else {
+                    createRecruit();
+                }
                 return true;
 
             default:
@@ -280,6 +286,55 @@ public class RecruitActivity extends AppCompatActivity {
 
                         Recruit.create(realm, recruit);
                         Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } finally {
+                realm.close();
+            }
+        }
+    }
+
+    private void updateRecruit(final int id) {
+        int patternId = pattern.getCheckedRadioButtonId();
+        final RadioButton pattern = (RadioButton) findViewById(patternId);
+
+        int resultId = result.getCheckedRadioButtonId();
+        final RadioButton result = (RadioButton) findViewById(resultId);
+
+        if(String.valueOf(company.getText()).equals("") || String.valueOf(pattern.getText()).equals("") || String.valueOf(position.getText()).equals("") || String.valueOf(schedule.getText()).equals("") ||
+                String.valueOf(process.getSelectedItem()).equals("") || String.valueOf(scheduleSub.getText()).equals("") || String.valueOf(result.getText()).equals("")) {
+            Toast.makeText(getApplicationContext(), "입력 사항이 부족합니다", Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                realm = Realm.getDefaultInstance();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Recruit recruit = new Recruit();
+
+                        // 이미지 처리
+                        if(logo.getDrawable() != null) {
+                            Drawable drawable = logo.getDrawable();
+                            Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            byte[] logoByteData = stream.toByteArray();
+                            recruit.setLogo(logoByteData);
+                        }
+
+                        recruit.setId(id);
+                        recruit.setCompany(String.valueOf(company.getText()));
+                        recruit.setPattern(String.valueOf(pattern.getText()));
+                        recruit.setPosition(String.valueOf(position.getText()));
+                        recruit.setSchedule(String.valueOf(schedule.getText()));
+                        recruit.setProcess(String.valueOf(process.getSelectedItem()));
+                        recruit.setScheduleSub(String.valueOf(scheduleSub.getText()));
+                        recruit.setProcessResult(String.valueOf(result.getText()));
+                        recruit.setLink(String.valueOf(link.getText()));
+                        recruit.setMemo(String.valueOf(memo.getText()));
+
+                        Recruit.update(realm, recruit);
+                        Toast.makeText(getApplicationContext(), "수정", Toast.LENGTH_SHORT).show();
                     }
                 });
             } finally {
