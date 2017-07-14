@@ -35,6 +35,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
+import static com.kimjunhong.jobplanner.R.menu.recruit;
+
 /**
  * Created by INMA on 2017. 6. 2..
  */
@@ -82,7 +84,7 @@ public class RecruitActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.recruit, menu);
+        getMenuInflater().inflate(recruit, menu);
         return true;
     }
 
@@ -265,14 +267,12 @@ public class RecruitActivity extends AppCompatActivity {
                         Recruit recruit = new Recruit();
 
                         // 이미지 처리
-                        if(logo.getDrawable() != null) {
-                            Drawable drawable = logo.getDrawable();
-                            Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] logoByteData = stream.toByteArray();
-                            recruit.setLogo(logoByteData);
-                        }
+                        Drawable drawable = logo.getDrawable();
+                        Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] logoByteData = stream.toByteArray();
+                        recruit.setLogo(logoByteData);
 
                         recruit.setCompany(String.valueOf(company.getText()));
                         recruit.setPattern(String.valueOf(pattern.getText()));
@@ -286,6 +286,7 @@ public class RecruitActivity extends AppCompatActivity {
 
                         Recruit.create(realm, recruit);
                         Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     }
                 });
             } finally {
@@ -313,14 +314,12 @@ public class RecruitActivity extends AppCompatActivity {
                         Recruit recruit = new Recruit();
 
                         // 이미지 처리
-                        if(logo.getDrawable() != null) {
-                            Drawable drawable = logo.getDrawable();
-                            Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] logoByteData = stream.toByteArray();
-                            recruit.setLogo(logoByteData);
-                        }
+                        Drawable drawable = logo.getDrawable();
+                        Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] logoByteData = stream.toByteArray();
+                        recruit.setLogo(logoByteData);
 
                         recruit.setId(id);
                         recruit.setCompany(String.valueOf(company.getText()));

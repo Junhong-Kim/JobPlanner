@@ -130,9 +130,7 @@ public class Recruit extends RealmObject {
         // 두번째 인자로 PK 값
         Recruit newRecruit = realm.createObject(Recruit.class, nextId);
 
-        if(recruit.getLogo() != null) {
-            newRecruit.setLogo(recruit.getLogo());
-        }
+        newRecruit.setLogo(recruit.getLogo());
         newRecruit.setCompany(recruit.getCompany());
         newRecruit.setPattern(recruit.getPattern());
         newRecruit.setPosition(recruit.getPosition());
@@ -151,9 +149,7 @@ public class Recruit extends RealmObject {
     public static void update(Realm realm, Recruit newRecruit) {
         Recruit recruit = findOne(realm, newRecruit.getId());
 
-        if(recruit.getLogo() != null) {
-            recruit.setLogo(newRecruit.getLogo());
-        }
+        recruit.setLogo(newRecruit.getLogo());
         recruit.setCompany(newRecruit.getCompany());
         recruit.setPattern(newRecruit.getPattern());
         recruit.setPosition(newRecruit.getPosition());
@@ -163,6 +159,11 @@ public class Recruit extends RealmObject {
         recruit.setProcessResult(newRecruit.getProcessResult());
         recruit.setLink(newRecruit.getLink());
         recruit.setMemo(newRecruit.getMemo());
+    }
+
+    public static void delete(Realm realm, int id) {
+        Recruit recruit = findOne(realm, id);
+        recruit.deleteFromRealm();
     }
 
     public static Recruit findOne(Realm realm, int id) {

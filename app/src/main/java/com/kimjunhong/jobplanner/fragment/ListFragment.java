@@ -1,14 +1,21 @@
 package com.kimjunhong.jobplanner.fragment;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
@@ -33,6 +40,7 @@ public class ListFragment extends Fragment {
     @BindView(R.id.expandableListView) ExpandableListView mListView;
     @BindView(R.id.fab) FloatingActionButton fab;
 
+    private ExpandableAdapter expandableAdapter;
     private ArrayList<String> parentList;
     private ArrayList<Recruit> documentProcess;
     private ArrayList<Recruit> testProcess;
@@ -48,6 +56,13 @@ public class ListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, view);
 
+        initData();
+        initView();
+
+        return view;
+    }
+
+    private void initData() {
         // Parent List Contents
         parentList = new ArrayList<>();
         parentList.add("서류");
@@ -111,7 +126,19 @@ public class ListFragment extends Fragment {
         childList.put(parentList.get(2), interviewProcess);
         childList.put(parentList.get(3), processResult);
 
-        mListView.setAdapter(new ExpandableAdapter(getActivity(), parentList, childList));
+        expandableAdapter = new ExpandableAdapter(getActivity(), parentList, childList);
+        mListView.setAdapter(expandableAdapter);
+    }
+
+    private void initView() {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), RecruitActivity.class));
+                getActivity().finish();
+            }
+        });
+
         mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int groupPosition, long id) {
@@ -142,7 +169,76 @@ public class ListFragment extends Fragment {
                     realm.close();
                 }
 
-                return false;
+                return true;
+            }
+        });
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                int itemType = ExpandableListView.getPackedPositionType(id);
+                int groupPosition = ExpandableListView.getPackedPositionGroup(id);
+                int childPosition = ExpandableListView.getPackedPositionChild(id);
+
+                if(itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                    Toast.makeText(getActivity(), "Group long click" , Toast.LENGTH_SHORT).show();
+                } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                    final int childId = childList.get(parentList.get(groupPosition)).get(childPosition).getId();
+                    Toast.makeText(getActivity(), "Child long click : " + childId, Toast.LENGTH_SHORT).show();
+
+                    // 다이얼로그 생성
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    // 커스텀 다이얼로그 가져오기
+                    View customLayout = View.inflate(getActivity(), R.layout.dialog_delete, null);
+                    // 빌더에 다이얼로그 적용
+                    builder.setView(customLayout);
+
+                    final Dialog dialog = builder.create();
+                    // 빌더 크기 적용
+                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                    lp.copyFrom(dialog.getWindow().getAttributes());
+                    lp.width = 1000;
+                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+                    dialog.show();
+
+                    // 디폴트 다이얼로그 투명화
+                    Window w = dialog.getWindow();
+                    w.setAttributes(lp);
+                    w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                    //삭제, 취소 클릭
+                    customLayout.findViewById(R.id.dialog_button_delete).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                realm = Realm.getDefaultInstance();
+                                realm.executeTransaction(new Realm.Transaction() {
+                                    @Override
+                                    public void execute(Realm realm) {
+                                        Recruit.delete(realm, childId);
+                                        initData();
+                                    }
+                                });
+                            } finally {
+                                Toast.makeText(getActivity(), "삭제", Toast.LENGTH_SHORT).show();
+                                realm.close();
+                                dialog.dismiss();
+
+                            }
+                        }
+                    });
+
+                    customLayout.findViewById(R.id.dialog_button_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(getActivity(), "취소", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    });
+                }
+
+                return true;
             }
         });
 
@@ -159,20 +255,6 @@ public class ListFragment extends Fragment {
             public void onGroupExpand(int groupPosition) {
                 // Toast.makeText(getActivity(), "Group expand = " + groupPosition, Toast.LENGTH_SHORT).show();
                 fab.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        initView();
-
-        return view;
-    }
-
-    private void initView() {
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), RecruitActivity.class));
-                getActivity().finish();
             }
         });
     }
