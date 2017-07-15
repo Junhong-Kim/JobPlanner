@@ -5,6 +5,7 @@ import android.util.Log;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -19,8 +20,8 @@ public class Recruit extends RealmObject {
     private String pattern;
     private String position;
     private String schedule;
+    private String scheduleTime;
     private String process;
-    private String scheduleSub;
     private String processResult;
     private String link;
     private String memo;
@@ -73,20 +74,20 @@ public class Recruit extends RealmObject {
         this.schedule = schedule;
     }
 
+    public String getScheduleTime() {
+        return scheduleTime;
+    }
+
+    public void setScheduleTime(String scheduleTime) {
+        this.scheduleTime = scheduleTime;
+    }
+
     public String getProcess() {
         return process;
     }
 
     public void setProcess(String process) {
         this.process = process;
-    }
-
-    public String getScheduleSub() {
-        return scheduleSub;
-    }
-
-    public void setScheduleSub(String scheduleSub) {
-        this.scheduleSub = scheduleSub;
     }
 
     public String getProcessResult() {
@@ -135,8 +136,8 @@ public class Recruit extends RealmObject {
         newRecruit.setPattern(recruit.getPattern());
         newRecruit.setPosition(recruit.getPosition());
         newRecruit.setSchedule(recruit.getSchedule());
+        newRecruit.setScheduleTime(recruit.getScheduleTime());
         newRecruit.setProcess(recruit.getProcess());
-        newRecruit.setScheduleSub(recruit.getScheduleSub());
         newRecruit.setProcessResult(recruit.getProcessResult());
         newRecruit.setLink(recruit.getLink());
         newRecruit.setMemo(recruit.getMemo());
@@ -154,8 +155,8 @@ public class Recruit extends RealmObject {
         recruit.setPattern(newRecruit.getPattern());
         recruit.setPosition(newRecruit.getPosition());
         recruit.setSchedule(newRecruit.getSchedule());
+        recruit.setScheduleTime(newRecruit.getScheduleTime());
         recruit.setProcess(newRecruit.getProcess());
-        recruit.setScheduleSub(newRecruit.getScheduleSub());
         recruit.setProcessResult(newRecruit.getProcessResult());
         recruit.setLink(newRecruit.getLink());
         recruit.setMemo(newRecruit.getMemo());
@@ -168,5 +169,13 @@ public class Recruit extends RealmObject {
 
     public static Recruit findOne(Realm realm, int id) {
         return realm.where(Recruit.class).equalTo("id", id).findFirst();
+    }
+
+    public static RealmResults<Recruit> findAll(Realm realm) {
+        return realm.where(Recruit.class).findAll();
+    }
+
+    public static RealmResults<Recruit> findAllByDate(Realm realm, String date) {
+        return realm.where(Recruit.class).equalTo("schedule", date).findAll();
     }
 }

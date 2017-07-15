@@ -18,8 +18,6 @@ import com.kimjunhong.jobplanner.model.Recruit;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
-
 /**
  * Created by INMA on 2017. 6. 2..
  */
@@ -144,10 +142,10 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
             childVH.logo.setImageResource(R.drawable.icon_company_logo);
         } else {
             Glide.with(context)
-                    .load(getChild(groupPosition, childPosition).getLogo()).asBitmap()
-                    .transform(new CropCircleTransformation(context))
-                    .placeholder(R.drawable.icon_picture)
-                    .into(childVH.logo);
+                 .load(getChild(groupPosition, childPosition).getLogo()).asBitmap()
+                 // .transform(new CropCircleTransformation(context))
+                 .placeholder(R.drawable.icon_picture)
+                 .into(childVH.logo);
         }
         childVH.company.setText(getChild(groupPosition, childPosition).getCompany());
         childVH.pattern.setText(getChild(groupPosition, childPosition).getPattern());

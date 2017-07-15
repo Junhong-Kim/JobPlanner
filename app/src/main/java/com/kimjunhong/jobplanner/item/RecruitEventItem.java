@@ -5,27 +5,25 @@ package com.kimjunhong.jobplanner.item;
  */
 
 public class RecruitEventItem {
-    int logo;
+    byte[] logo;
     String name;
     String job;
     String time;
     String process;
-    String division;
 
-    public RecruitEventItem(int logo, String name, String job, String time, String process, String division) {
+    public RecruitEventItem(byte[] logo, String name, String job, String time, String process) {
         this.logo = logo;
         this.name = name;
         this.job = job;
         this.time = time;
         this.process = process;
-        this.division = division;
     }
 
-    public int getLogo() {
+    public byte[] getLogo() {
         return logo;
     }
 
-    public void setLogo(int logo) {
+    public void setLogo(byte[] logo) {
         this.logo = logo;
     }
 
@@ -59,13 +57,5 @@ public class RecruitEventItem {
 
     public void setProcess(String process) {
         this.process = process;
-    }
-
-    public String getDivision() {
-        return division;
-    }
-
-    public void setDivision(String division) {
-        this.division = division;
     }
 }

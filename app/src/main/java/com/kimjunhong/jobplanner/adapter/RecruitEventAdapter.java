@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.item.RecruitEventItem;
 
@@ -47,12 +48,14 @@ public class RecruitEventAdapter extends RecyclerView.Adapter<RecruitEventAdapte
             }
         });
 
-        holder.logo.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_company_logo));
+        Glide.with(context).load(item.getLogo()).asBitmap()
+             .placeholder(R.drawable.icon_picture)
+             .into(holder.logo);
+
         holder.name.setText(item.getName());
         holder.job.setText(item.getJob());
         holder.time.setText(item.getTime());
         holder.process.setText(item.getProcess());
-        holder.division.setText(item.getDivision());
     }
 
     @Override
@@ -67,7 +70,6 @@ public class RecruitEventAdapter extends RecyclerView.Adapter<RecruitEventAdapte
         @BindView(R.id.recruit_event_job) TextView job;
         @BindView(R.id.recruit_event_time) TextView time;
         @BindView(R.id.recruit_event_process) TextView process;
-        @BindView(R.id.recruit_event_division) TextView division;
 
         public ViewHolder(View itemView) {
             super(itemView);

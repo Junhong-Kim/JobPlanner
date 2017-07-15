@@ -3,8 +3,10 @@ package com.kimjunhong.jobplanner.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.adapter.RecruitEventAdapter;
 import com.kimjunhong.jobplanner.item.RecruitEventItem;
+import com.kimjunhong.jobplanner.model.Recruit;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +30,8 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by INMA on 2017. 5. 31..
@@ -32,12 +39,13 @@ import butterknife.ButterKnife;
 
 public class CalendarFragment extends Fragment {
     SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("yyyy년 MM월", Locale.getDefault());
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 M월 d일");
+    Realm realm;
 
     @BindView(R.id.calendarView_previous_month) ImageView calendarViewPreviousMonth;
     @BindView(R.id.calendarView_next_month) ImageView calendarViewNextMonth;
     @BindView(R.id.calendarView_header) TextView calendarViewHeader;
     @BindView(R.id.calendarView) CompactCalendarView calendarView;
-
     @BindView(R.id.recruit_event_recyclerView) RecyclerView recyclerView;
 
     @Nullable
@@ -47,8 +55,11 @@ public class CalendarFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
+        Date today = new Date();
+        String date = dateFormat.format(today);
+
         initCalendarView();
-        initRecyclerView();
+        initRecyclerView(date);
 
         return view;
     }
@@ -60,7 +71,10 @@ public class CalendarFragment extends Fragment {
         calendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
+                String date = dateFormat.format(dateClicked);
+                initRecyclerView(date);
 
+                Log.v("log", "dateClicked : " + date);
             }
 
             @Override
@@ -82,28 +96,56 @@ public class CalendarFragment extends Fragment {
                 calendarView.showNextMonth();
             }
         });
+
+        try {
+            realm = Realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    RealmResults<Recruit> recruits = Recruit.findAll(realm);
+                    for(Recruit recruit : recruits) {
+                        try {
+                            Date date = dateFormat.parse(recruit.getSchedule());
+                            Event event = new Event(ContextCompat.getColor(getActivity(), R.color.colorAccent), date.getTime());
+                            calendarView.addEvent(event, true);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        } finally {
+            realm.close();
+        }
     }
 
-    private List<RecruitEventItem> dummyData() {
-        List<RecruitEventItem> items = new ArrayList<>();
-        RecruitEventItem[] item = new RecruitEventItem[5];
+    private List<RecruitEventItem> scheduleData(final String date) {
+        final List<RecruitEventItem> items = new ArrayList<>();
 
-        item[0] = new RecruitEventItem(R.drawable.icon_company_logo, "Google", "Android Developer", "13:00", "서류", "마감");
-        item[1] = new RecruitEventItem(R.drawable.icon_company_logo, "Facebook", "Android Developer", "14:00", "서류", "마감");
-        item[2] = new RecruitEventItem(R.drawable.icon_company_logo, "Twitter", "Android Developer", "15:00", "서류", "마감");
-        item[3] = new RecruitEventItem(R.drawable.icon_company_logo, "Instagram", "Android Developer", "16:00", "서류", "마감");
-        item[4] = new RecruitEventItem(R.drawable.icon_company_logo, "Samsung", "Android Developer", "17:00", "서류", "마감");
+        realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<Recruit> recruits = Recruit.findAllByDate(realm, date);
 
-        for(int i = 0; i < 5; i++) {
-            items.add(item[i]);
-        }
+                RecruitEventItem[] item = new RecruitEventItem[recruits.size()];
+                for (int i = 0; i < recruits.size(); i++) {
+                    item[i] = new RecruitEventItem(recruits.get(i).getLogo(),
+                                                   recruits.get(i).getCompany(),
+                                                   recruits.get(i).getPosition(),
+                                                   recruits.get(i).getScheduleTime(),
+                                                   recruits.get(i).getProcess());
+                    items.add(item[i]);
+                }
+            }
+        });
 
         return items;
     }
 
-    private void initRecyclerView() {
+    private void initRecyclerView(String date) {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(new RecruitEventAdapter(getActivity(), dummyData()));
+        recyclerView.setAdapter(new RecruitEventAdapter(getActivity(), scheduleData(date)));
     }
 }

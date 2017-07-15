@@ -1,6 +1,7 @@
 package com.kimjunhong.jobplanner.activity;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -22,6 +23,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -30,6 +32,7 @@ import com.kimjunhong.jobplanner.model.Recruit;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,8 +55,8 @@ public class RecruitActivity extends AppCompatActivity {
     @BindView(R.id.recruit_edit_pattern_career) RadioButton career;
     @BindView(R.id.recruit_edit_position) EditText position;
     @BindView(R.id.recruit_edit_schedule) TextView schedule;
+    @BindView(R.id.recruit_edit_schedule_time) TextView scheduleTime;
     @BindView(R.id.recruit_edit_process) Spinner process;
-    @BindView(R.id.recruit_edit_schedule_sub) TextView scheduleSub;
     @BindView(R.id.recruit_edit_process_result) RadioGroup result;
     @BindView(R.id.recruit_edit_process_ing) RadioButton ing;
     @BindView(R.id.recruit_edit_process_pass) RadioButton pass;
@@ -156,12 +159,12 @@ public class RecruitActivity extends AppCompatActivity {
                         position.setText(recruit.getPosition());
                         // Schedule
                         schedule.setText(recruit.getSchedule());
+                        // ScheduleTime
+                        scheduleTime.setText(recruit.getScheduleTime());
                         // Process
                         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.recruit_process, android.R.layout.simple_spinner_dropdown_item);
                         process.setAdapter(adapter);
                         processPosition = adapter.getPosition(recruit.getProcess());
-                        // Schedule sub
-                        scheduleSub.setText(recruit.getScheduleSub());
                         // Process result
                         String checkedResult = recruit.getProcessResult();
                         if(checkedResult.equals("진행중")) {
@@ -196,6 +199,7 @@ public class RecruitActivity extends AppCompatActivity {
         final int year = calendar.get(Calendar.YEAR);
         final int month = calendar.get(Calendar.MONTH);
         final int day = calendar.get(Calendar.DAY_OF_MONTH);
+        final Date time = calendar.getTime();
 
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,14 +223,18 @@ public class RecruitActivity extends AppCompatActivity {
             }
         });
 
-        scheduleSub.setOnClickListener(new View.OnClickListener() {
+        scheduleTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(scheduleSub.getText().equals("마감")) {
-                    scheduleSub.setText("예정");
-                } else {
-                    scheduleSub.setText("마감");
-                }
+                TimePickerDialog.OnTimeSetListener timePicker = new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                        scheduleTime.setText(hourOfDay + ":" + minute);
+                        Toast.makeText(getApplicationContext(), hourOfDay + ":" + minute, Toast.LENGTH_SHORT).show();
+                    }
+                };
+
+                new TimePickerDialog(RecruitActivity.this, timePicker, time.getHours(), time.getMinutes(), true).show();
             }
         });
     }
@@ -255,8 +263,9 @@ public class RecruitActivity extends AppCompatActivity {
         int resultId = result.getCheckedRadioButtonId();
         final RadioButton result = (RadioButton) findViewById(resultId);
 
-        if(String.valueOf(company.getText()).equals("") || String.valueOf(pattern.getText()).equals("") || String.valueOf(position.getText()).equals("") || String.valueOf(schedule.getText()).equals("") ||
-           String.valueOf(process.getSelectedItem()).equals("") || String.valueOf(scheduleSub.getText()).equals("") || String.valueOf(result.getText()).equals("")) {
+        if(String.valueOf(company.getText()).equals("") || String.valueOf(pattern.getText()).equals("") || String.valueOf(position.getText()).equals("") ||
+           String.valueOf(schedule.getText()).equals("") || String.valueOf(scheduleTime.getText()).equals("") ||
+           String.valueOf(process.getSelectedItem()).equals("") || String.valueOf(result.getText()).equals("")) {
             Toast.makeText(getApplicationContext(), "입력 사항이 부족합니다", Toast.LENGTH_SHORT).show();
         } else {
             try {
@@ -278,8 +287,8 @@ public class RecruitActivity extends AppCompatActivity {
                         recruit.setPattern(String.valueOf(pattern.getText()));
                         recruit.setPosition(String.valueOf(position.getText()));
                         recruit.setSchedule(String.valueOf(schedule.getText()));
+                        recruit.setScheduleTime(String.valueOf(scheduleTime.getText()));
                         recruit.setProcess(String.valueOf(process.getSelectedItem()));
-                        recruit.setScheduleSub(String.valueOf(scheduleSub.getText()));
                         recruit.setProcessResult(String.valueOf(result.getText()));
                         recruit.setLink(String.valueOf(link.getText()));
                         recruit.setMemo(String.valueOf(memo.getText()));
@@ -302,8 +311,9 @@ public class RecruitActivity extends AppCompatActivity {
         int resultId = result.getCheckedRadioButtonId();
         final RadioButton result = (RadioButton) findViewById(resultId);
 
-        if(String.valueOf(company.getText()).equals("") || String.valueOf(pattern.getText()).equals("") || String.valueOf(position.getText()).equals("") || String.valueOf(schedule.getText()).equals("") ||
-                String.valueOf(process.getSelectedItem()).equals("") || String.valueOf(scheduleSub.getText()).equals("") || String.valueOf(result.getText()).equals("")) {
+        if(String.valueOf(company.getText()).equals("") || String.valueOf(pattern.getText()).equals("") || String.valueOf(position.getText()).equals("") ||
+           String.valueOf(schedule.getText()).equals("") || String.valueOf(scheduleTime.getText()).equals("") ||
+           String.valueOf(process.getSelectedItem()).equals("") || String.valueOf(result.getText()).equals("")) {
             Toast.makeText(getApplicationContext(), "입력 사항이 부족합니다", Toast.LENGTH_SHORT).show();
         } else {
             try {
@@ -326,8 +336,8 @@ public class RecruitActivity extends AppCompatActivity {
                         recruit.setPattern(String.valueOf(pattern.getText()));
                         recruit.setPosition(String.valueOf(position.getText()));
                         recruit.setSchedule(String.valueOf(schedule.getText()));
+                        recruit.setScheduleTime(String.valueOf(scheduleTime.getText()));
                         recruit.setProcess(String.valueOf(process.getSelectedItem()));
-                        recruit.setScheduleSub(String.valueOf(scheduleSub.getText()));
                         recruit.setProcessResult(String.valueOf(result.getText()));
                         recruit.setLink(String.valueOf(link.getText()));
                         recruit.setMemo(String.valueOf(memo.getText()));
