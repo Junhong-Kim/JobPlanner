@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -25,25 +26,35 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.kimjunhong.jobplanner.R;
+import com.kimjunhong.jobplanner.activity.ChartActivity;
+import com.kimjunhong.jobplanner.item.ChartDetailItem;
+import com.kimjunhong.jobplanner.model.Recruit;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by INMA on 2017. 6. 20..
  */
 
 public class SynthesizeChartFragment extends Fragment implements OnChartValueSelectedListener {
-    @BindView(R.id.pieChart_synthesize)
-    PieChart pieChart;
+    @BindView(R.id.pieChart_synthesize) PieChart pieChart;
+
+    private Realm realm;
+    private int documentPercent;
+    private int testPercent;
+    private int interviewPercent;
+    private int finalPassPercent;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_synthesize_chart, container, false);
-
         ButterKnife.bind(this, view);
 
         initChart();
@@ -52,24 +63,46 @@ public class SynthesizeChartFragment extends Fragment implements OnChartValueSel
     }
 
     private void initChart() {
+        // 차트 비율
+        try {
+            realm = Realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    float documentSize = Recruit.findAllByProcessWithResult(realm, "서류", "불합격").size();
+                    float testSize = Recruit.findAllByProcessWithResult(realm, "시험", "불합격").size();
+                    float interviewSize = Recruit.findAllByProcessWithResult(realm, "면접", "불합격").size();
+
+                    float finalPassSize = realm.where(Recruit.class).equalTo("process", "최종면접")
+                                                                    .equalTo("processResult", "합격")
+                                                                    .findAll().size();
+
+                    float totalSize = documentSize + testSize + interviewSize + finalPassSize;
+
+                    documentPercent = (int) ((documentSize / totalSize) * 100);
+                    testPercent = (int) ((testSize / totalSize) * 100);
+                    interviewPercent = (int) ((interviewSize / totalSize) * 100);
+                    finalPassPercent = (int) ((finalPassSize / totalSize) * 100);
+                }
+            });
+        } finally {
+            realm.close();
+        }
+
         // 차트 데이터
         ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(10, "최종합격"));
-        entries.add(new PieEntry(30, "서류"));
-        entries.add(new PieEntry(15, "인/적성"));
-        entries.add(new PieEntry(15, "TEST"));
-        entries.add(new PieEntry(10, "1차면접"));
-        entries.add(new PieEntry(10, "2차면접"));
-        entries.add(new PieEntry(10, "최종면접"));
+        entries.add(new PieEntry(finalPassPercent, "최종합격"));
+        entries.add(new PieEntry(documentPercent, "서류"));
+        entries.add(new PieEntry(testPercent, "시험"));
+        entries.add(new PieEntry(interviewPercent, "면접"));
+
+        Log.v("log", finalPassPercent + ", " + documentPercent + ", " + testPercent + ", " + interviewPercent);
 
         // 차트 설정
         int[] colors = {ContextCompat.getColor(getActivity(), R.color.positive),
-                ContextCompat.getColor(getActivity(), R.color.negative),
-                ContextCompat.getColor(getActivity(), R.color.negative),
-                ContextCompat.getColor(getActivity(), R.color.negative),
-                ContextCompat.getColor(getActivity(), R.color.negative),
-                ContextCompat.getColor(getActivity(), R.color.negative),
-                ContextCompat.getColor(getActivity(), R.color.negative)};
+                        ContextCompat.getColor(getActivity(), R.color.negative),
+                        Color.parseColor("#EC407A"),
+                        Color.parseColor("#F06292")};
 
         PieDataSet dataSet = new PieDataSet(entries, "종합");
         dataSet.setColors(ColorTemplate.createColors(colors));
@@ -92,8 +125,51 @@ public class SynthesizeChartFragment extends Fragment implements OnChartValueSel
 
     @Override
     public void onValueSelected(Entry e, Highlight h) {
-        if (e == null)
+        ChartActivity chartActivity = ((ChartActivity) ChartActivity.context);
+
+        if (e == null) {
             return;
+        } else if (h.getX() == 0) {
+            Toast.makeText(getActivity(), String.valueOf(e), Toast.LENGTH_LONG).show();
+            final List<ChartDetailItem> items = new ArrayList<>();
+
+            try {
+                realm = Realm.getDefaultInstance();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        RealmResults<Recruit> recruits = realm.where(Recruit.class).equalTo("process", "최종면접")
+                                                              .equalTo("processResult", "합격")
+                                                              .findAll();
+
+                        ChartDetailItem[] item = new ChartDetailItem[recruits.size()];
+
+                        for (int i = 0; i < recruits.size(); i++) {
+                            item[i] = new ChartDetailItem(recruits.get(i).getId(),
+                                                          recruits.get(i).getLogo(),
+                                                          recruits.get(i).getCompany(),
+                                                          recruits.get(i).getPosition(),
+                                                          recruits.get(i).getProcessResult(),
+                                                          recruits.get(i).getSchedule());
+
+                            items.add(item[i]);
+                        }
+                    }
+                });
+            } finally {
+                chartActivity.initRecyclerView(items);
+                realm.close();
+            }
+        } else if (h.getX() == 1) {
+            Toast.makeText(getActivity(), String.valueOf(e), Toast.LENGTH_LONG).show();
+            chartActivity.initRecyclerView(chartActivity.getProcessResults("서류", "불합격"));
+        } else if (h.getX() == 2) {
+            Toast.makeText(getActivity(), String.valueOf(e), Toast.LENGTH_LONG).show();
+            chartActivity.initRecyclerView(chartActivity.getProcessResults("시험", "불합격"));
+        } else {
+            Toast.makeText(getActivity(), String.valueOf(e), Toast.LENGTH_LONG).show();
+            chartActivity.initRecyclerView(chartActivity.getProcessResults("면접", "불합격"));
+        }
         Log.i("VAL SELECTED", "Value: " + e.getY() + ", index: " + h.getX() + ", DataSet index: " + h.getDataSetIndex());
     }
 

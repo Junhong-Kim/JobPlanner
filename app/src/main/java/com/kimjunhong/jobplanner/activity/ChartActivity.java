@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.adapter.ChartDetailAdapter;
@@ -24,6 +23,7 @@ import com.kimjunhong.jobplanner.fragment.InterviewChartFragment;
 import com.kimjunhong.jobplanner.fragment.SynthesizeChartFragment;
 import com.kimjunhong.jobplanner.fragment.TestChartFragment;
 import com.kimjunhong.jobplanner.item.ChartDetailItem;
+import com.kimjunhong.jobplanner.model.Recruit;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
@@ -31,6 +31,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by INMA on 2017. 6. 11..
@@ -44,19 +46,21 @@ public class ChartActivity extends AppCompatActivity {
     @BindView(R.id.viewPager) ViewPager viewPager;
     @BindView(R.id.viewPager_indicator) CirclePageIndicator indicator;
     @BindView(R.id.chart_detail_recyclerView) RecyclerView recyclerView;
+
     public static Context context;
+    private Realm realm;
+    private int currentPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
-
         ButterKnife.bind(this);
 
         initToolbar();
         initView();
         initChartPager();
-        initRecyclerView(dummyData());
+        initRecyclerView(getProcessRecruits("서류"));
     }
 
     @Override
@@ -88,14 +92,16 @@ public class ChartActivity extends AppCompatActivity {
         prevProcess.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "PREV", Toast.LENGTH_SHORT).show();
+                if(currentPage > 0)
+                    viewPager.setCurrentItem(--currentPage);
             }
         });
 
         nextProcess.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "NEXT", Toast.LENGTH_SHORT).show();
+                if(currentPage < 3)
+                    viewPager.setCurrentItem(++currentPage);
             }
         });
     }
@@ -113,6 +119,7 @@ public class ChartActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                currentPage = position;
                 indicator.setViewPager(viewPager);
             }
 
@@ -121,19 +128,19 @@ public class ChartActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         processName.setText("서류");
-                        initRecyclerView(dummyData());
+                        initRecyclerView(getProcessRecruits("서류"));
                         break;
                     case 1:
                         processName.setText("시험");
-                        initRecyclerView(dummyData());
+                        initRecyclerView(getProcessRecruits("시험"));
                         break;
                     case 2:
                         processName.setText("면접");
-                        initRecyclerView(dummyData());
+                        initRecyclerView(getProcessRecruits("면접"));
                         break;
                     case 3:
                         processName.setText("종합");
-                        initRecyclerView(dummyData());
+                        initRecyclerView(getProcessRecruits("종합"));
                         break;
                 }
             }
@@ -145,15 +152,59 @@ public class ChartActivity extends AppCompatActivity {
         });
     }
 
-    private List<ChartDetailItem> dummyData() {
-        List<ChartDetailItem> items = new ArrayList<>();
-        ChartDetailItem[] item = new ChartDetailItem[2];
+    private List<ChartDetailItem> getProcessRecruits(final String process) {
+        final List<ChartDetailItem> items = new ArrayList<>();
 
-        item[0] = new ChartDetailItem(R.drawable.icon_company_logo, "Company", "Android Developer", "합격", "17.06.19");
-        item[1] = new ChartDetailItem(R.drawable.icon_company_logo, "Company", "Android Developer", "합격", "17.06.19");
+        try {
+            realm = Realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    RealmResults<Recruit> recruits = Recruit.findAllByProcess(realm, process);
+                    ChartDetailItem[] item = new ChartDetailItem[recruits.size()];
 
-        for(int i = 0; i < item.length; i++) {
-            items.add(item[i]);
+                    for (int i = 0; i < recruits.size(); i++) {
+                        item[i] = new ChartDetailItem(recruits.get(i).getId(),
+                                                      recruits.get(i).getLogo(),
+                                                      recruits.get(i).getCompany(),
+                                                      recruits.get(i).getPosition(),
+                                                      recruits.get(i).getProcessResult(),
+                                                      recruits.get(i).getSchedule());
+                        items.add(item[i]);
+                    }
+                }
+            });
+        } finally {
+            realm.close();
+        }
+
+        return items;
+    }
+
+    public List<ChartDetailItem> getProcessResults(final String process, final String result) {
+        final List<ChartDetailItem> items = new ArrayList<>();
+
+        try {
+            realm = realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    RealmResults<Recruit> recruits = Recruit.findAllByProcessWithResult(realm, process, result);
+                    ChartDetailItem[] item = new ChartDetailItem[recruits.size()];
+
+                    for (int i = 0; i < recruits.size(); i++) {
+                        item[i] = new ChartDetailItem(recruits.get(i).getId(),
+                                                      recruits.get(i).getLogo(),
+                                                      recruits.get(i).getCompany(),
+                                                      recruits.get(i).getPosition(),
+                                                      recruits.get(i).getProcessResult(),
+                                                      recruits.get(i).getSchedule());
+                        items.add(item[i]);
+                    }
+                }
+            });
+        } finally {
+            realm.close();
         }
 
         return items;

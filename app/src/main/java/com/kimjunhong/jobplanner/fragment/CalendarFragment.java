@@ -38,21 +38,20 @@ import io.realm.RealmResults;
  */
 
 public class CalendarFragment extends Fragment {
-    SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("yyyy년 MM월", Locale.getDefault());
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 M월 d일");
-    Realm realm;
-
     @BindView(R.id.calendarView_previous_month) ImageView calendarViewPreviousMonth;
     @BindView(R.id.calendarView_next_month) ImageView calendarViewNextMonth;
     @BindView(R.id.calendarView_header) TextView calendarViewHeader;
     @BindView(R.id.calendarView) CompactCalendarView calendarView;
     @BindView(R.id.recruit_event_recyclerView) RecyclerView recyclerView;
 
+    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("yyyy년 MM월", Locale.getDefault());
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 M월 d일");
+    private Realm realm;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
-
         ButterKnife.bind(this, view);
 
         Date today = new Date();
@@ -122,23 +121,28 @@ public class CalendarFragment extends Fragment {
     private List<RecruitEventItem> scheduleData(final String date) {
         final List<RecruitEventItem> items = new ArrayList<>();
 
-        realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<Recruit> recruits = Recruit.findAllByDate(realm, date);
+        try {
+            realm = Realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    RealmResults<Recruit> recruits = Recruit.findAllByDate(realm, date);
 
-                RecruitEventItem[] item = new RecruitEventItem[recruits.size()];
-                for (int i = 0; i < recruits.size(); i++) {
-                    item[i] = new RecruitEventItem(recruits.get(i).getLogo(),
-                                                   recruits.get(i).getCompany(),
-                                                   recruits.get(i).getPosition(),
-                                                   recruits.get(i).getScheduleTime(),
-                                                   recruits.get(i).getProcess());
-                    items.add(item[i]);
+                    RecruitEventItem[] item = new RecruitEventItem[recruits.size()];
+                    for (int i = 0; i < recruits.size(); i++) {
+                        item[i] = new RecruitEventItem(recruits.get(i).getId(),
+                                                       recruits.get(i).getLogo(),
+                                                       recruits.get(i).getCompany(),
+                                                       recruits.get(i).getPosition(),
+                                                       recruits.get(i).getScheduleTime(),
+                                                       recruits.get(i).getProcess());
+                        items.add(item[i]);
+                    }
                 }
-            }
-        });
+            });
+        } finally {
+            realm.close();
+        }
 
         return items;
     }

@@ -5,57 +5,67 @@ package com.kimjunhong.jobplanner.item;
  */
 
 public class ChartDetailItem {
-    int logo;
-    String name;
-    String job;
-    String result;
-    String date;
+    private int id;
+    private byte[] logo;
+    private String company;
+    private String position;
+    private String processResult;
+    private String schedule;
 
-    public ChartDetailItem(int logo, String name, String job, String result, String date) {
+    public ChartDetailItem(int id, byte[] logo, String company, String position, String processResult, String schedule) {
+        this.id = id;
         this.logo = logo;
-        this.name = name;
-        this.job = job;
-        this.result = result;
-        this.date = date;
+        this.company = company;
+        this.position = position;
+        this.processResult = processResult;
+        this.schedule = schedule;
     }
 
-    public int getLogo() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public byte[] getLogo() {
         return logo;
     }
 
-    public void setLogo(int logo) {
+    public void setLogo(byte[] logo) {
         this.logo = logo;
     }
 
-    public String getName() {
-        return name;
+    public String getCompany() {
+        return company;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCompany(String company) {
+        this.company = company;
     }
 
-    public String getJob() {
-        return job;
+    public String getPosition() {
+        return position;
     }
 
-    public void setJob(String job) {
-        this.job = job;
+    public void setPosition(String position) {
+        this.position = position;
     }
 
-    public String getResult() {
-        return result;
+    public String getProcessResult() {
+        return processResult;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setProcessResult(String processResult) {
+        this.processResult = processResult;
     }
 
-    public String getDate() {
-        return date;
+    public String getSchedule() {
+        return schedule;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setSchedule(String schedule) {
+        this.schedule = schedule;
     }
 }

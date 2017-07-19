@@ -9,5 +9,5 @@
     <color name="transparent">#00000000</color>
     <color name="gray">#757575</color>
     <color name="positive">#3F51B5</color>
-    <color name="negative">#FF4081</color>
+    <color name="negative">#E91E63</color>
 </resources>

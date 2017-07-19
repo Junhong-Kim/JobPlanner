@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -25,25 +26,30 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.kimjunhong.jobplanner.R;
+import com.kimjunhong.jobplanner.activity.ChartActivity;
+import com.kimjunhong.jobplanner.model.Recruit;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 /**
  * Created by INMA on 2017. 6. 20..
  */
 
 public class TestChartFragment extends Fragment implements OnChartValueSelectedListener {
-    @BindView(R.id.pieChart_test)
-    PieChart pieChart;
+    @BindView(R.id.pieChart_test) PieChart pieChart;
+
+    private Realm realm;
+    private int passPercent;
+    private int failPercent;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_test_chart, container, false);
-
         ButterKnife.bind(this, view);
 
         initChart();
@@ -52,14 +58,43 @@ public class TestChartFragment extends Fragment implements OnChartValueSelectedL
     }
 
     private void initChart() {
+        // 차트 비율
+        try {
+            realm = Realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    float passSize = realm.where(Recruit.class).equalTo("processResult", "합격")
+                                                               .equalTo("process", "인/적성")
+                                                               .or()
+                                                               .equalTo("processResult", "합격")
+                                                               .equalTo("process", "TEST")
+                                                               .findAll().size();
+
+                    float failSize = realm.where(Recruit.class).equalTo("processResult", "불합격")
+                                                               .equalTo("process", "인/적성")
+                                                               .or()
+                                                               .equalTo("processResult", "불합격")
+                                                               .equalTo("process", "TEST")
+                                                               .findAll().size();
+                    float totalSize = passSize + failSize;
+
+                    passPercent = (int) ((passSize / totalSize) * 100);
+                    failPercent = (int) ((failSize / totalSize) * 100);
+                }
+            });
+        } finally {
+            realm.close();
+        }
+
         // 차트 데이터
         ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(30, "합격"));
-        entries.add(new PieEntry(70, "불합격"));
+        entries.add(new PieEntry(passPercent, "합격"));
+        entries.add(new PieEntry(failPercent, "불합격"));
 
         // 차트 설정
         int[] colors = {ContextCompat.getColor(getActivity(), R.color.positive),
-                ContextCompat.getColor(getActivity(), R.color.negative)};
+                        ContextCompat.getColor(getActivity(), R.color.negative)};
 
         PieDataSet dataSet = new PieDataSet(entries, "시험");
         dataSet.setColors(ColorTemplate.createColors(colors));
@@ -82,8 +117,18 @@ public class TestChartFragment extends Fragment implements OnChartValueSelectedL
 
     @Override
     public void onValueSelected(Entry e, Highlight h) {
-        if (e == null)
+        ChartActivity chartActivity = ((ChartActivity) ChartActivity.context);
+
+        if (e == null) {
             return;
+        } else if (h.getX() == 0) {
+            Toast.makeText(getActivity(), String.valueOf(e), Toast.LENGTH_LONG).show();
+            chartActivity.initRecyclerView(chartActivity.getProcessResults("시험", "합격"));
+        } else {
+            Toast.makeText(getActivity(), String.valueOf(e), Toast.LENGTH_LONG).show();
+            chartActivity.initRecyclerView(chartActivity.getProcessResults("시험", "불합격"));
+        }
+
         Log.i("VAL SELECTED", "Value: " + e.getY() + ", index: " + h.getX() + ", DataSet index: " + h.getDataSetIndex());
     }
 

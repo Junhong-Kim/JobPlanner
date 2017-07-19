@@ -178,4 +178,54 @@ public class Recruit extends RealmObject {
     public static RealmResults<Recruit> findAllByDate(Realm realm, String date) {
         return realm.where(Recruit.class).equalTo("schedule", date).findAll();
     }
+
+    public static RealmResults<Recruit> findAllByProcess(Realm realm, String process) {
+        switch (process) {
+            case "서류":
+                return realm.where(Recruit.class).equalTo("process", "서류")
+                                                 .findAll();
+            case "시험":
+                return realm.where(Recruit.class).equalTo("process", "인/적성")
+                                                 .or()
+                                                 .equalTo("process", "TEST")
+                                                 .findAll();
+            case "면접":
+                return realm.where(Recruit.class).equalTo("process", "1차면접")
+                                                 .or()
+                                                 .equalTo("process", "2차면접")
+                                                 .or()
+                                                 .equalTo("process", "최종면접")
+                                                 .findAll();
+            default:
+                return realm.where(Recruit.class).findAll();
+        }
+    }
+
+    public static RealmResults<Recruit> findAllByProcessWithResult(Realm realm, String process, String result) {
+        switch (process) {
+            case "서류":
+                return realm.where(Recruit.class).equalTo("process", "서류")
+                                                 .equalTo("processResult", result)
+                                                 .findAll();
+            case "시험":
+                return realm.where(Recruit.class).equalTo("process", "인/적성")
+                                                 .equalTo("processResult", result)
+                                                 .or()
+                                                 .equalTo("process", "TEST")
+                                                 .equalTo("processResult", result)
+                                                 .findAll();
+            case "면접":
+                return realm.where(Recruit.class).equalTo("process", "1차면접")
+                                                 .equalTo("processResult", result)
+                                                 .or()
+                                                 .equalTo("process", "2차면접")
+                                                 .equalTo("processResult", result)
+                                                 .or()
+                                                 .equalTo("process", "최종면접")
+                                                 .equalTo("processResult", result)
+                                                 .findAll();
+            default:
+                return realm.where(Recruit.class).equalTo("processResult", result).findAll();
+        }
+    }
 }
