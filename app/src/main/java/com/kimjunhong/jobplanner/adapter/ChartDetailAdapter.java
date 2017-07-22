@@ -48,6 +48,7 @@ public class ChartDetailAdapter extends RecyclerView.Adapter<ChartDetailAdapter.
             public void onClick(View view) {
                 Intent intent = new Intent(context, RecruitActivity.class);
                 intent.putExtra("id", item.getId());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_toolbar" />
+
+    <TextView
+        style="@style/SmallFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="목표/각오를 입력해 주세요"
+        android:textColor="@color/gray" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_sub_stroke"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <EditText
+            android:id="@+id/input_editText"
+            style="@style/MediumFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null" />
+
+        <ImageView
+            android:id="@+id/input_cancel"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/icon_cancel" />
+    </LinearLayout>
+</LinearLayout>

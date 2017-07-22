@@ -38,7 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
-import static com.kimjunhong.jobplanner.R.menu.recruit;
+import static com.kimjunhong.jobplanner.R.menu.edit;
 
 /**
  * Created by INMA on 2017. 6. 2..
@@ -87,7 +87,7 @@ public class RecruitActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(recruit, menu);
+        getMenuInflater().inflate(edit, menu);
         return true;
     }
 

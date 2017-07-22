@@ -20,5 +20,7 @@
         </activity>
         <activity android:name=".activity.RecruitActivity" />
         <activity android:name=".activity.ChartActivity" />
+        <activity android:name=".activity.SettingsActivity" />
+        <activity android:name=".activity.InputActivity" />
     </application>
 </manifest>
