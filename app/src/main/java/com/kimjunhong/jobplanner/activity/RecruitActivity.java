@@ -95,7 +95,7 @@ public class RecruitActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                // startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
                 return true;
 
@@ -116,7 +116,7 @@ public class RecruitActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        // startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
     }
 
@@ -296,6 +296,7 @@ public class RecruitActivity extends AppCompatActivity {
                         Recruit.create(realm, recruit);
                         Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        finish();
                     }
                 });
             } finally {

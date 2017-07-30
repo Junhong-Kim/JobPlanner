@@ -73,9 +73,8 @@ public class ListFragment extends Fragment {
         // Child - Document Process Contents
         documentProcess = new ArrayList<>();
         realm = Realm.getDefaultInstance();
-        RealmResults<Recruit> documentProcessList = realm.where(Recruit.class).equalTo("processResult", "진행중")
-                                                                              .equalTo("process", "서류")
-                                                                              .findAll();
+        RealmResults<Recruit> documentProcessList = Recruit.findAllByProcessWithResult(realm, "서류", "진행중");
+
         for(Recruit recruit : documentProcessList) {
             Log.v("log", recruit + ": 서류");
             documentProcess.add(recruit);
@@ -83,28 +82,17 @@ public class ListFragment extends Fragment {
 
         // Child - Test Process Contents
         testProcess = new ArrayList<>();
-        RealmResults<Recruit> testProcessList = realm.where(Recruit.class).equalTo("processResult", "진행중")
-                                                                          .equalTo("process", "인/적성")
-                                                                          .or()
-                                                                          .equalTo("processResult", "진행중")
-                                                                          .equalTo("process", "TEST")
-                                                                          .findAll();
+        RealmResults<Recruit> testProcessList = Recruit.findAllByProcessWithResult(realm, "필기", "진행중");
+
         for(Recruit recruit : testProcessList) {
-            Log.v("log", recruit + ": 시험");
+            Log.v("log", recruit + ": 필기");
             testProcess.add(recruit);
         }
 
         // Child - Interview Process Contents
         interviewProcess = new ArrayList<>();
-        RealmResults<Recruit> interviewProcessList = realm.where(Recruit.class).equalTo("processResult", "진행중")
-                                                                               .equalTo("process", "1차면접")
-                                                                               .or()
-                                                                               .equalTo("processResult", "진행중")
-                                                                               .equalTo("process", "2차면접")
-                                                                               .or()
-                                                                               .equalTo("processResult", "진행중")
-                                                                               .equalTo("process", "최종면접")
-                                                                               .findAll();
+        RealmResults<Recruit> interviewProcessList = Recruit.findAllByProcessWithResult(realm, "면접", "진행중");
+
         for(Recruit recruit : interviewProcessList) {
             Log.v("log", recruit + ": 면접");
             interviewProcess.add(recruit);
@@ -112,8 +100,8 @@ public class ListFragment extends Fragment {
 
         // Child - Process Result Contents
         processResult = new ArrayList<>();
-        RealmResults<Recruit> processResultList = realm.where(Recruit.class).notEqualTo("processResult", "진행중")
-                                                                            .findAll();
+        RealmResults<Recruit> processResultList = realm.where(Recruit.class).notEqualTo("processResult", "진행중").findAll();
+
         for(Recruit recruit : processResultList) {
             Log.v("log", recruit + ": 결과");
             processResult.add(recruit);
@@ -142,7 +130,7 @@ public class ListFragment extends Fragment {
         mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int groupPosition, long id) {
-                Toast.makeText(getActivity(), "Group click = " + groupPosition, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "Group click = " + groupPosition, Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -162,7 +150,7 @@ public class ListFragment extends Fragment {
                             intent.putExtra("id", recruit.getId());
 
                             startActivity(intent);
-                            getActivity().finish();
+                            // getActivity().finish();
                         }
                     });
                 } finally {
@@ -181,10 +169,10 @@ public class ListFragment extends Fragment {
                 int childPosition = ExpandableListView.getPackedPositionChild(id);
 
                 if(itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-                    Toast.makeText(getActivity(), "Group long click" , Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getActivity(), "Group long click" , Toast.LENGTH_SHORT).show();
                 } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
                     final int childId = childList.get(parentList.get(groupPosition)).get(childPosition).getId();
-                    Toast.makeText(getActivity(), "Child long click : " + childId, Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getActivity(), "Child long click : " + childId, Toast.LENGTH_SHORT).show();
 
                     // 다이얼로그 생성
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

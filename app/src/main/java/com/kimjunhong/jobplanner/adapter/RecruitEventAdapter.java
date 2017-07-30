@@ -35,7 +35,7 @@ public class RecruitEventAdapter extends RecyclerView.Adapter<RecruitEventAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recruit_event, null);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recruit_event, parent, false);
         return new ViewHolder(v);
     }
 
@@ -52,12 +52,13 @@ public class RecruitEventAdapter extends RecyclerView.Adapter<RecruitEventAdapte
             }
         });
 
-        Glide.with(context).load(item.getLogo()).asBitmap()
-                           .placeholder(R.drawable.icon_picture)
-                           .into(holder.logo);
+        Glide.with(context)
+             .load(item.getLogo()).asBitmap()
+             .into(holder.logo);
 
         holder.name.setText(item.getCompany());
         holder.job.setText(item.getPosition());
+        holder.pattern.setText(item.getPattern());
         holder.time.setText(item.getScheduleTime());
         holder.process.setText(item.getProcess());
     }
@@ -72,6 +73,7 @@ public class RecruitEventAdapter extends RecyclerView.Adapter<RecruitEventAdapte
         @BindView(R.id.recruit_event_logo) ImageView logo;
         @BindView(R.id.recruit_event_name) TextView name;
         @BindView(R.id.recruit_event_job) TextView job;
+        @BindView(R.id.recruit_event_pattern) TextView pattern;
         @BindView(R.id.recruit_event_time) TextView time;
         @BindView(R.id.recruit_event_process) TextView process;
 

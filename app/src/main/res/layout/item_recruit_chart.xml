@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recruit_event_layout"
-    android:layout_width="fill_parent"
+    android:id="@+id/recruit_chart_layout"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="5dp"
     android:background="@drawable/bg_gray"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="5dp">
 
     <ImageView
-        android:id="@+id/recruit_event_logo"
+        android:id="@+id/recruit_chart_logo"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@mipmap/ic_launcher" />
@@ -24,8 +27,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/recruit_event_name"
-            style="@style/MediumFont"
+            android:id="@+id/recruit_chart_company"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="기업명"
@@ -37,16 +39,16 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/recruit_event_job"
+                android:id="@+id/recruit_chart_position"
                 style="@style/MediumFont"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="직무"
                 android:textColor="@color/colorPrimary"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/recruit_event_pattern"
+                android:id="@+id/recruit_chart_pattern"
                 style="@style/SmallFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,6 +56,14 @@
                 android:layout_weight="1"
                 android:text="고용형태" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/recruit_chart_schedule"
+            style="@style/SmallFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000년 00월 00일"
+            android:textColor="@color/gray" />
     </LinearLayout>
 
     <LinearLayout
@@ -64,18 +74,18 @@
         android:padding="5dp">
 
         <TextView
-            android:id="@+id/recruit_event_process"
+            android:id="@+id/recruit_chart_result"
             style="@style/MediumFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="전형" />
+            android:text="결과" />
 
         <TextView
-            android:id="@+id/recruit_event_time"
+            android:id="@+id/recruit_chart_process"
             style="@style/SmallFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
+            android:text="전형"
             android:textColor="@color/gray" />
     </LinearLayout>
 </LinearLayout>

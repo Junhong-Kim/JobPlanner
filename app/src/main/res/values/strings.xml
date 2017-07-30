@@ -3,7 +3,7 @@
     <string-array name="recruit_process">
         <item>서류</item>
         <item>인/적성</item>
-        <item>TEST</item>
+        <item>테스트</item>
         <item>1차면접</item>
         <item>2차면접</item>
         <item>최종면접</item>

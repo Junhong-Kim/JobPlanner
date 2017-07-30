@@ -31,6 +31,7 @@ import com.gun0912.tedpermission.TedPermission;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.adapter.TabPagerAdapter;
 import com.kimjunhong.jobplanner.fragment.CalendarFragment;
+import com.kimjunhong.jobplanner.util.BackPressCloseHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.navigationView) NavigationView navigationView;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 M월 d일");
+    private BackPressCloseHandler backPressCloseHandler = new BackPressCloseHandler(this);;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +86,16 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menu_chart:
                 startActivity(new Intent(MainActivity.this, ChartActivity.class));
+                finish();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
     }
 
     private void initToolbar() {

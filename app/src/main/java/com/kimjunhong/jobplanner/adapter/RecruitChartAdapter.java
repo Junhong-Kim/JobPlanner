@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.activity.RecruitActivity;
-import com.kimjunhong.jobplanner.item.ChartDetailItem;
+import com.kimjunhong.jobplanner.item.RecruitChartItem;
 
 import java.util.List;
 
@@ -24,24 +24,24 @@ import butterknife.ButterKnife;
  * Created by INMA on 2017. 6. 19..
  */
 
-public class ChartDetailAdapter extends RecyclerView.Adapter<ChartDetailAdapter.ViewHolder> {
+public class RecruitChartAdapter extends RecyclerView.Adapter<RecruitChartAdapter.ViewHolder> {
     private Context context;
-    private List<ChartDetailItem> items;
+    private List<RecruitChartItem> items;
 
-    public ChartDetailAdapter(Context context, List<ChartDetailItem> items) {
+    public RecruitChartAdapter(Context context, List<RecruitChartItem> items) {
         this.context = context;
         this.items = items;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chart_detail, null);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recruit_chart, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final ChartDetailItem item = items.get(position);
+        final RecruitChartItem item = items.get(position);
 
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,14 +54,15 @@ public class ChartDetailAdapter extends RecyclerView.Adapter<ChartDetailAdapter.
         });
 
         Glide.with(context)
-             .load(item.getLogo())
-             .asBitmap()
+             .load(item.getLogo()).asBitmap()
              .into(holder.logo);
 
-        holder.name.setText(item.getCompany());
-        holder.job.setText(item.getPosition());
+        holder.company.setText(item.getCompany());
+        holder.position.setText(item.getPosition());
+        holder.pattern.setText(item.getPattern());
         holder.result.setText(item.getProcessResult());
-        holder.date.setText(item.getSchedule());
+        holder.schedule.setText(item.getSchedule());
+        holder.process.setText(item.getProcess());
     }
 
     @Override
@@ -70,12 +71,14 @@ public class ChartDetailAdapter extends RecyclerView.Adapter<ChartDetailAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.chart_detail_layout) LinearLayout layout;
-        @BindView(R.id.chart_detail_logo) ImageView logo;
-        @BindView(R.id.chart_detail_name) TextView name;
-        @BindView(R.id.chart_detail_job) TextView job;
-        @BindView(R.id.chart_detail_result) TextView result;
-        @BindView(R.id.chart_detail_date) TextView date;
+        @BindView(R.id.recruit_chart_layout) LinearLayout layout;
+        @BindView(R.id.recruit_chart_logo) ImageView logo;
+        @BindView(R.id.recruit_chart_company) TextView company;
+        @BindView(R.id.recruit_chart_position) TextView position;
+        @BindView(R.id.recruit_chart_pattern) TextView pattern;
+        @BindView(R.id.recruit_chart_result) TextView result;
+        @BindView(R.id.recruit_chart_schedule) TextView schedule;
+        @BindView(R.id.recruit_chart_process) TextView process;
 
         public ViewHolder(View itemView) {
             super(itemView);

@@ -2,27 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorDefault"
     android:orientation="vertical">
 
     <include layout="@layout/layout_toolbar" />
 
-    <FrameLayout
+    <ImageView
+        android:id="@+id/recruit_edit_logo"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:background="@color/colorAccent">
-
-        <ImageView
-            android:id="@+id/recruit_edit_logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:src="@drawable/icon_company_logo" />
-    </FrameLayout>
+        android:layout_gravity="center"
+        android:background="@drawable/bg_sub_stroke"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:src="@drawable/icon_company_logo" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
+        android:layout_marginRight="10dp"
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="vertical">
@@ -69,6 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/black"
+                    android:checked="true"
                     android:text="신입" />
 
                 <RadioButton
@@ -177,6 +178,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/black"
+                    android:checked="true"
                     android:text="진행중" />
 
                 <RadioButton

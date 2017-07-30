@@ -127,6 +127,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
             childVH.pattern = (TextView) view.findViewById(R.id.recruit_child_pattern);
             childVH.position = (TextView) view.findViewById(R.id.recruit_child_position);
             childVH.schedule = (TextView) view.findViewById(R.id.recruit_child_schedule);
+            childVH.process = (TextView) view.findViewById(R.id.recruit_child_process);
             childVH.result = (TextView) view.findViewById(R.id.recruit_child_result);
 
             view.setTag(childVH);
@@ -143,14 +144,13 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         } else {
             Glide.with(context)
                  .load(getChild(groupPosition, childPosition).getLogo()).asBitmap()
-                 // .transform(new CropCircleTransformation(context))
-                 .placeholder(R.drawable.icon_picture)
                  .into(childVH.logo);
         }
         childVH.company.setText(getChild(groupPosition, childPosition).getCompany());
         childVH.pattern.setText(getChild(groupPosition, childPosition).getPattern());
         childVH.position.setText(getChild(groupPosition, childPosition).getPosition());
         childVH.schedule.setText(getChild(groupPosition, childPosition).getSchedule());
+        childVH.process.setText(getChild(groupPosition, childPosition).getProcess());
         childVH.result.setText(getChild(groupPosition, childPosition).getProcessResult());
 
         return view;
@@ -177,6 +177,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         public TextView pattern;
         public TextView position;
         public TextView schedule;
+        public TextView process;
         public TextView result;
     }
 }

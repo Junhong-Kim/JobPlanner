@@ -1,59 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorDefault"
     android:orientation="vertical">
 
     <include layout="@layout/layout_toolbar" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/chart_previous_process"
-            style="@style/RecruitIconStyle"
-            android:src="@drawable/icon_previous" />
-
-        <TextView
-            android:id="@+id/chart_process_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="전형" />
-
-        <ImageView
-            android:id="@+id/chart_next_process"
-            style="@style/RecruitIconStyle"
-            android:src="@drawable/icon_next" />
-    </LinearLayout>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent">
 
-    <com.viewpagerindicator.CirclePageIndicator
-        android:id="@+id/viewPager_indicator"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/viewPager"
-        app:fillColor="@color/colorPrimary" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/sub" />
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/chart_pieChart"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/chart_detail_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/sub" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/chart_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/chart_defaultLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorDefault">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/icon_warning" />
+
+                <TextView
+                    style="@style/MediumFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="채용 결과 데이터가 부족해요!" />
+
+                <TextView
+                    style="@style/SmallFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="최종 결과에 대해서 분석합니다"
+                    android:textColor="@color/gray" />
+            </LinearLayout>
+        </FrameLayout>
+    </RelativeLayout>
 </LinearLayout>

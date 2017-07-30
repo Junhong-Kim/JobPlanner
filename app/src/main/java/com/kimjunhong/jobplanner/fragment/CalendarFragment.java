@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,7 +43,8 @@ public class CalendarFragment extends Fragment {
     @BindView(R.id.calendarView_next_month) ImageView calendarViewNextMonth;
     @BindView(R.id.calendarView_header) TextView calendarViewHeader;
     @BindView(R.id.calendarView) CompactCalendarView calendarView;
-    @BindView(R.id.recruit_event_recyclerView) RecyclerView recyclerView;
+    @BindView(R.id.calendar_recyclerView) RecyclerView recyclerView;
+    @BindView(R.id.calendar_defaultLayout) FrameLayout defaultLayout;
 
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("yyyy년 MM월", Locale.getDefault());
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 M월 d일");
@@ -71,9 +73,18 @@ public class CalendarFragment extends Fragment {
             @Override
             public void onDayClick(Date dateClicked) {
                 String date = dateFormat.format(dateClicked);
-                initRecyclerView(date);
+                int dateSize = scheduleData(date).size();
 
-                Log.v("log", "dateClicked : " + date);
+                if(dateSize == 0) {
+                    // 채용 일정이 없을 경우
+                    defaultLayout.setVisibility(View.VISIBLE);
+                } else {
+                    // 채용 일정이 있을 경우
+                    defaultLayout.setVisibility(View.INVISIBLE);
+                    initRecyclerView(date);
+                }
+
+                Log.v("log", "date : " + date + ", " + "size : " + dateSize);
             }
 
             @Override
@@ -133,6 +144,7 @@ public class CalendarFragment extends Fragment {
                         item[i] = new RecruitEventItem(recruits.get(i).getId(),
                                                        recruits.get(i).getLogo(),
                                                        recruits.get(i).getCompany(),
+                                                       recruits.get(i).getPattern(),
                                                        recruits.get(i).getPosition(),
                                                        recruits.get(i).getScheduleTime(),
                                                        recruits.get(i).getProcess());
@@ -148,8 +160,17 @@ public class CalendarFragment extends Fragment {
     }
 
     private void initRecyclerView(String date) {
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(new RecruitEventAdapter(getActivity(), scheduleData(date)));
+        int dateSize = scheduleData(date).size();
+
+        if(dateSize == 0) {
+            // 채용 일정이 없을 경우
+            defaultLayout.setVisibility(View.VISIBLE);
+        } else {
+            // 채용 일정이 있을 경우
+            defaultLayout.setVisibility(View.INVISIBLE);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            recyclerView.setAdapter(new RecruitEventAdapter(getActivity(), scheduleData(date)));
+        }
     }
 }

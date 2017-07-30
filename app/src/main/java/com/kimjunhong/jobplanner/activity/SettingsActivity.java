@@ -67,6 +67,12 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
+    }
+
     private void initToolbar() {
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
