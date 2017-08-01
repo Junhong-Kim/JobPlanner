@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +75,6 @@ public class ListFragment extends Fragment {
         RealmResults<Recruit> documentProcessList = Recruit.findAllByProcessWithResult(realm, "서류", "진행중");
 
         for(Recruit recruit : documentProcessList) {
-            Log.v("log", recruit + ": 서류");
             documentProcess.add(recruit);
         }
 
@@ -85,7 +83,6 @@ public class ListFragment extends Fragment {
         RealmResults<Recruit> testProcessList = Recruit.findAllByProcessWithResult(realm, "필기", "진행중");
 
         for(Recruit recruit : testProcessList) {
-            Log.v("log", recruit + ": 필기");
             testProcess.add(recruit);
         }
 
@@ -94,7 +91,6 @@ public class ListFragment extends Fragment {
         RealmResults<Recruit> interviewProcessList = Recruit.findAllByProcessWithResult(realm, "면접", "진행중");
 
         for(Recruit recruit : interviewProcessList) {
-            Log.v("log", recruit + ": 면접");
             interviewProcess.add(recruit);
         }
 
@@ -103,7 +99,6 @@ public class ListFragment extends Fragment {
         RealmResults<Recruit> processResultList = realm.where(Recruit.class).notEqualTo("processResult", "진행중").findAll();
 
         for(Recruit recruit : processResultList) {
-            Log.v("log", recruit + ": 결과");
             processResult.add(recruit);
         }
 
@@ -122,7 +117,9 @@ public class ListFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), RecruitActivity.class));
+                Intent intent = new Intent(getActivity(), RecruitActivity.class);
+                intent.putExtra("create", true);
+                startActivity(intent);
                 getActivity().finish();
             }
         });

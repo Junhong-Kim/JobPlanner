@@ -19,19 +19,20 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.adapter.TabPagerAdapter;
 import com.kimjunhong.jobplanner.fragment.CalendarFragment;
-import com.kimjunhong.jobplanner.util.BackPressCloseHandler;
+import com.kimjunhong.jobplanner.util.NativeAdDialog;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.navigationView) NavigationView navigationView;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 M월 d일");
-    private BackPressCloseHandler backPressCloseHandler = new BackPressCloseHandler(this);;
+    private InterstitialAd interstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,12 +64,21 @@ public class MainActivity extends AppCompatActivity {
         initViewPager();
         initDrawerLayout();
         permissionCheck();
+
+        // AdMob 전면 광고
+        interstitialAd = new InterstitialAd(getApplicationContext());
+        interstitialAd.setAdUnitId(getResources().getString(R.string.interstitial_ad_unit_id));
+        AdRequest adRequest = new AdRequest.Builder().build();
+        interstitialAd.loadAd(adRequest);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         setTitle(null);
+        if(interstitialAd.isLoaded()) {
+            interstitialAd.show();
+        }
     }
 
     @Override
@@ -87,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_chart:
                 startActivity(new Intent(MainActivity.this, ChartActivity.class));
                 finish();
+                interstitialAd.show();
                 return true;
         }
 
@@ -95,7 +106,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        backPressCloseHandler.onBackPressed();
+        // AdMob 네이티브 광고
+        NativeAdDialog dialog = new NativeAdDialog(this);
+        dialog.show();
     }
 
     private void initToolbar() {
@@ -193,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
             long diffDays = diff / (24 * 60 * 60 * 1000);
 
             dDay.setText(String.valueOf(diffDays));
-            Log.v("log", "날짜 차이 : " + diffDays + ", " + diff);
         } catch (ParseException e) {
             e.printStackTrace();
         }

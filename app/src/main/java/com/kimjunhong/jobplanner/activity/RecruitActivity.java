@@ -11,7 +11,6 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +26,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.model.Recruit;
 
@@ -63,9 +64,11 @@ public class RecruitActivity extends AppCompatActivity {
     @BindView(R.id.recruit_edit_process_fail) RadioButton fail;
     @BindView(R.id.recruit_edit_link) EditText link;
     @BindView(R.id.recruit_edit_memo) EditText memo;
+    @BindView(R.id.recruit_adView) AdView adView;
 
     static int REQUEST_PHOTO_ALBUM = 0;
-    int processPosition;
+    private int processPosition;
+    private Boolean createAction;
     private Realm realm;
 
     @Override
@@ -77,6 +80,12 @@ public class RecruitActivity extends AppCompatActivity {
 
         initToolbar();
         initView();
+
+        createAction = getIntent().getBooleanExtra("create", false);
+
+        // AdMob 배너 광고
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     @Override
@@ -95,8 +104,11 @@ public class RecruitActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                if(createAction) {
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                }
                 finish();
+
                 return true;
 
             case R.id.menu_edit:
@@ -116,7 +128,9 @@ public class RecruitActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        if(createAction) {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
         finish();
     }
 
@@ -135,7 +149,6 @@ public class RecruitActivity extends AppCompatActivity {
                     @Override
                     public void execute(Realm realm) {
                         Recruit recruit = realm.where(Recruit.class).equalTo("id", id).findFirst();
-                        Log.v("log", "Selected: " + recruit);
 
                         // Logo
                         Glide.with(getApplicationContext())

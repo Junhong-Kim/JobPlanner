@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "609363651363",
+    "firebase_url": "https://jobplanner-65dd3.firebaseio.com",
+    "project_id": "jobplanner-65dd3",
+    "storage_bucket": "jobplanner-65dd3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609363651363:android:a89175017405e481",
+        "android_client_info": {
+          "package_name": "com.kimjunhong.jobplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "609363651363-5ep9di5g5fq32ihsjfgujtr9mfpq414e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl3uErA85LLxs5BE8_5FPqII4R05BbRzE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

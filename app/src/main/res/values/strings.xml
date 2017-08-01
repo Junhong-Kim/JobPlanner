@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JobPlanner</string>
+    <string name="app_name">Job Planner</string>
     <string-array name="recruit_process">
         <item>서류</item>
         <item>인/적성</item>
@@ -8,4 +8,8 @@
         <item>2차면접</item>
         <item>최종면접</item>
     </string-array>
+    <string name="ad_app_id">ca-app-pub-4097755662674285~9114264234</string>
+    <string name="banner_ad_unit_id">ca-app-pub-4097755662674285/8320057310</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-4097755662674285/8700945669</string>
+    <string name="native_ad_unit_id">ca-app-pub-4097755662674285/4695812540</string>
 </resources>

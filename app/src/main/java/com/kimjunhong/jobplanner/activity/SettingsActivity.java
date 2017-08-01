@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -19,6 +22,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.kimjunhong.jobplanner.R;
 
 import java.util.Calendar;
@@ -37,6 +42,9 @@ public class SettingsActivity extends AppCompatActivity {
     @BindView(R.id.settings_message_layout) LinearLayout messageLayout;
     @BindView(R.id.settings_message) TextView message;
     @BindView(R.id.settings_notification) Switch notification;
+    @BindView(R.id.settings_license) LinearLayout licenseLayout;
+    @BindView(R.id.settings_versionName) TextView version;
+    @BindView(R.id.settings_adView) AdView adView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +54,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         initToolbar();
         initView();
+
+        // AdMob 배너 광고
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     @Override
@@ -137,5 +149,22 @@ public class SettingsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "서비스 준비중입니다", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // 아이콘 라이선스
+        licenseLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://icons8.com/")));
+            }
+        });
+
+        // 버전 이름
+        try {
+            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String versionName = pi.versionName;
+            version.setText(versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

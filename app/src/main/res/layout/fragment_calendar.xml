@@ -69,10 +69,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/calendar_recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp" />
+            android:layout_height="match_parent" />
 
         <FrameLayout
             android:id="@+id/calendar_defaultLayout"
@@ -90,7 +87,7 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/icon_warning_schedule" />
+                    android:src="@drawable/icon_info_schedule" />
 
                 <TextView
                     style="@style/SmallFont"

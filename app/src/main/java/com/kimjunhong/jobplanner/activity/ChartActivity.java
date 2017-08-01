@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -25,6 +24,8 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.kimjunhong.jobplanner.R;
 import com.kimjunhong.jobplanner.adapter.RecruitChartAdapter;
 import com.kimjunhong.jobplanner.item.RecruitChartItem;
@@ -48,6 +49,7 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
     @BindView(R.id.chart_pieChart) PieChart pieChart;
     @BindView(R.id.chart_recyclerView) RecyclerView recyclerView;
     @BindView(R.id.chart_defaultLayout) FrameLayout defaultLayout;
+    @BindView(R.id.chart_adView) AdView adView;
 
     private Realm realm;
     private int documentPercent;
@@ -65,6 +67,10 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         initToolbar();
         initChart();
         initRecyclerView(getProcessRecruits());
+
+        // AdMob 전면 광고
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     @Override
@@ -106,8 +112,6 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
                                                        .equalTo("process", "최종면접")
                                                        .equalTo("processResult", "합격")
                                                        .findAll().size();
-
-                Log.v("log", "resultSize : " + resultSize);
             }
         });
 
@@ -148,13 +152,11 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
             entries.add(new PieEntry(testPercent, "필기"));
             entries.add(new PieEntry(interviewPercent, "면접"));
 
-            Log.v("log", finalPassPercent + ", " + documentPercent + ", " + testPercent + ", " + interviewPercent);
-
             // 차트 설정
             int[] colors = {ContextCompat.getColor(getApplicationContext(), R.color.positive),
-                            ContextCompat.getColor(getApplicationContext(), R.color.negative),
-                            Color.parseColor("#EC407A"),
-                            Color.parseColor("#F06292")};
+                            ContextCompat.getColor(getApplicationContext(), R.color.negative1),
+                            ContextCompat.getColor(getApplicationContext(), R.color.negative2),
+                            ContextCompat.getColor(getApplicationContext(), R.color.negative3)};
 
             PieDataSet dataSet = new PieDataSet(entries, "종합");
             // 차트 색
@@ -244,7 +246,6 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         }
 
         initChart();
-        Log.v("log", "Value: " + e.getY() + ", Index: " + h.getX() + ", DataSet Index: " + h.getDataSetIndex());
     }
 
     @Override

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorDefault"
@@ -17,7 +18,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="5dp"
-        android:src="@drawable/icon_company_logo" />
+        android:src="@drawable/icon_picture" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -241,11 +242,13 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/recruit_adView"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:text="광고 자리"
-        android:textColor="#ffffff" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id" />
 </LinearLayout>

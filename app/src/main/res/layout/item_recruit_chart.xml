@@ -16,7 +16,7 @@
         android:id="@+id/recruit_chart_logo"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/icon_picture" />
 
     <LinearLayout
         android:layout_width="match_parent"

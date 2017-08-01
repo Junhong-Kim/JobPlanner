@@ -2,7 +2,6 @@ package com.kimjunhong.jobplanner.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,10 +136,8 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         }
 
         // Set - Child View
-        Log.v("log", "로고: " + getChild(groupPosition, childPosition).getLogo());
-
         if(getChild(groupPosition, childPosition).getLogo() == null) {
-            childVH.logo.setImageResource(R.drawable.icon_company_logo);
+            childVH.logo.setImageResource(R.drawable.icon_picture);
         } else {
             Glide.with(context)
                  .load(getChild(groupPosition, childPosition).getLogo()).asBitmap()

@@ -1,7 +1,5 @@
 package com.kimjunhong.jobplanner.model;
 
-import android.util.Log;
-
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -143,8 +141,6 @@ public class Recruit extends RealmObject {
         newRecruit.setMemo(recruit.getMemo());
 
         recruits.add(newRecruit);
-
-        Log.v("log", String.valueOf(recruits));
     }
 
     public static void update(Realm realm, Recruit newRecruit) {
